@@ -7,6 +7,11 @@ import requests
 import lzma
 from colorama import init, Fore
 
+#########################################################################################################
+# This version of ppm for OmegaOS Sunset (1.0) Beta is deprecated and will no longer receive maintenance or updates.
+# A new version of ppm is coming soon.   
+#########################################################################################################
+
 # Initialize colorama
 init(autoreset=True)
 
@@ -23,11 +28,11 @@ sys.setrecursionlimit(2000)
 dependency_cache = {}
 
 
-
 # Ensure the script is run with root permissions
 if os.getuid() != 0:
-    print("请以 root 权限运行。")
+    print("Please run with root permissions.")
     sys.exit(1)
+
 
 # Create cache directory if it doesn't exist
 cache_dir = '/var/cache/ppm'
@@ -43,7 +48,7 @@ def init_config():
             'name': 'OmegaOS Base',
             'type': 'deb',
             'url': 'http://mirrors.ustc.edu.cn/debian',
-            'codename': 'stable',
+            'codename': 'testing',
             'category': 'main/binary-amd64',
         },
         {
@@ -56,7 +61,7 @@ def init_config():
     with open('repo.json', 'w') as f:
         f.write(json.dumps(example_repo, indent=4, ensure_ascii=False))
     
-    print(f"{success} 成功初始化配置文件于 \"/etc/ppm/\"")
+    print(f"{success} Successfully initialized the configuration file at \"/etc/ppm/\"")
 
 def update_packages():
     """Update package metadata from the repository."""
@@ -65,10 +70,10 @@ def update_packages():
 
     for repo in repos:
         if repo['type'] == 'deb':
-            print(f"{info} 正在更新软件包列表: {repo['name']} ({repo['type']})...")
+            print(f"{info} Updating package list: {repo['name']} ({repo['type']})...")
             print(f"{info} {repo['url'].split('//')[-1].split('/')[0]} {repo['codename']} {repo['category']} Packages", end='\r')
             url = f"{repo['url']}/dists/{repo['codename']}/{repo['category']}/Packages.xz"
-            try:    
+            try:
                 response = requests.get(url)
                 print(f"{get} {repo['url'].split('//')[-1].split('/')[0]} {repo['codename']} {repo['category']} Packages")
             except:
@@ -77,7 +82,8 @@ def update_packages():
             with open(f'{path}.xz', 'wb') as f:
                 f.write(response.content)
 
-            print(f"{info} 正在将 apt 软件包列表 \"{repo['name']}\" 转换为 ppm 格式。")
+            print(f"{info} Converting apt package list \"{repo['name']}\" to ppm format.")
+
 
             with lzma.open(f'{path}.xz') as compressed:
                 with open(f'{path}.raw', 'wb') as uncompressed:
@@ -85,12 +91,13 @@ def update_packages():
 
             package_list = parse_packages(f'{path}.raw')
             save_packages_to_json(package_list, path)
-            print(f"{success} 成功更新 {repo['name']} ({repo['type']})。")
+            print(f"{success} Successfully updated {repo['name']} ({repo['type']}).")
             
         else:
-            print(f"{warn} 无法解析软件包源 {repo['name']} ({repo['type']})，忽略该项。")
+            print(f"{warn} Unable to parse package source {repo['name']} ({repo['type']}), ignoring this item.")
 
-    print(f'{success} 所有软件包列表文件已更新。')
+    print(f'{success} All package list files have been updated.')
+
 
 def parse_packages(file_path):
     """Parse package information from the raw package file."""
@@ -139,16 +146,17 @@ def search(packname):
     return None
 
 def download(dolist, repo, install = False):
-    terminal_size = os.get_terminal_size() 
-    width = int(terminal_size.columns * 0.5)
     failed = []
     a = 0
     with open('/var/cache/ppm/status.json') as f:
         installed = json.loads(f.read())
     for i in dolist:
+        terminal_size = os.get_terminal_size() 
+        width = int(terminal_size.columns * 0.5)
+        
         a += 1
         url = f"{repo['url']}/{search(i)['Filename']}"
-        sys.stdout.write(f"{info} ({a}/{len(dolist)}) [{'=' * int((a / len(dolist)) * width)}>{int(((len(dolist) - a) / len(dolist)) * width) * ' '}] {i}\r")
+        sys.stdout.write(f"{info} ({a}/{len(dolist)}) [{'█' * int((a / len(dolist)) * width)}{int(((len(dolist) - a) / len(dolist)) * width) * ' '}] {i}\r")
         sys.stdout.flush()
         
         try:    
@@ -170,15 +178,16 @@ def download(dolist, repo, install = False):
             print(f"{error} {a} {repo['url'].split('//')[-1].split('/')[0]} {repo['codename']} {repo['category']} {i} {response.status_code}")
             failed.append(i)
     
-    print(f"{info} 软件包下载完毕。")
+    print(f"{info} Package download complete.")
+
     
     if len(failed) != 0:
-        print(f'{warn} 有 {len(failed)} 个软件包安装失败，正在重试...')
+        print(f'{warn} {len(failed)} packages failed to download, retrying...')
         a = 0
         for i in failed:
             a += 1
             url = f"{repo['url']}/{search(i)['Filename']}"
-            sys.stdout.write(f"{warn} 修复中：({a}/{len(failed)}) {i}\r")
+            sys.stdout.write(f"{warn} Retry: ({a}/{len(failed)}) {i}\r")
             sys.stdout.flush()
             failed = []
             try:    
@@ -202,12 +211,11 @@ def download_package(dolist):
     with open('/etc/ppm/repo.json') as f:
         repo = json.loads(f.read())
         repo = repo[0]
-    a = 0
-    print(f"以下新软件包将被下载：", end='')
+    print(f"The following new packages will be downloaded: ", end='')
     for i in dolist:
         print(i, end=' ')
     print()
-    choice = input(f"共 {len(dolist)} 个软件包，开始下载？[Y/n] ")
+    choice = input(f"There are {len(dolist)} packages in total, start downloading? [Y/n] ")
     if not choice:
         download(dolist, repo)
     else:
@@ -221,14 +229,15 @@ def install_package(dolist):
         repo = repo[0]
     a = 0
     if len(dolist) == 0:
-        print(f"{error} 无法安装此软件包。")
-        exit()
-    print(f"{info} 以下新软件包将被安装：", end='')
+        print(f"{error} Unable to install this package.")
+        lock_disable()
+    print(f"{info} The following new packages will be installed: ", end='')
+
     for i in dolist:
         print(i, end=' ')
     print()
     
-    choice = input(f"{info} 共 {len(dolist)} 个软件包，开始安装？[Y/n] ")
+    choice = input(f"{info} There are {len(dolist)} packages in total, start installing? [Y/n] ")
     if not choice:
         download(dolist, repo, install = True)
     else:
@@ -240,12 +249,13 @@ def install_package(dolist):
     for i in os.listdir():
         if '.dpkg' in i:
             countdeb += 1
-    print(f'{info} 已发现 {countdeb} 个 Debian 软件包，正在调用 dpkg...')
+    print(f'{info} {countdeb} Debian packages found, invoking dpkg...')
     os.system('apt install --fix-broken -y')
     os.system(f'dpkg -i *')
-    print(f"{info} 正在清理...")
+    print(f"{info} Cleaning up...")
     for i in os.listdir():
         os.remove(i)
+
 
 def get_package(packname, depend=None):
 
@@ -255,9 +265,9 @@ def get_package(packname, depend=None):
         depend = set()  # Using a set for faster lookups
     
     if '|' in packname:
-        print(f'{warn} 检测到依赖选择的多重可能性: {packname.replace("|", "或")}。')
+        print(f'{warn} Multiple possible dependency choices detected: {packname.replace("|", "or")}.')
         packname = packname.split(' | ')[0]
-        print(f'{warn} 将默认选择 {packname}。')
+        print(f'{warn} The default choice will be {packname}.')
     
     package = search(packname)
     if not package or package['Package'] in depend:
@@ -289,12 +299,12 @@ def search_package(target):
             found += 1
 
     if found == 0:
-        print(f"{error} 无法使用 '{target}' 关键词找到任何软件包。")
+        print(f"{error} No package found using the '{target}' keyword.")
     else:
-        print(f'{success} 已找到 {found} 个软件包。')
+        print(f'{success} {found} packages found.')
 
 def sync_dpkg_status():
-    print(f"{info} 正在同步 dpkg 已经安装的软件包状态...")
+    print(f"{info} Synchronizing the status of already installed dpkg packages...")
     
     with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f:
         a = f.read().strip().split(',')
@@ -311,7 +321,7 @@ def sync_dpkg_status():
         with open('/var/cache/ppm/status.json', 'w') as f:
             f.write(json.dumps(dic, indent=4, ensure_ascii=False))
     
-    print(f"{info} 当前系统已经安装 {len(dic)} 个软件包。")
+    print(f"{info} The current system has {len(dic)} packages installed.")
     
 
 def lock_disable():
@@ -330,22 +340,22 @@ def main():
         init_config()
     sys.setrecursionlimit(2000)
     if len(sys.argv) < 2:
-        print(f"""ppm {version}: 缺失命令
-用法: ppm [选项] 命令
+        print(f"""ppm {version}: Missing command
+Usage: ppm [options] command
 
-ppm 是一个命令行包管理器，目前正在测试。
-如果你遇到在使用 ppm 时的任何问题，请反馈到 [https://github.com/Stevesuk0/ppm/issues]。
+ppm is a command-line package manager currently under testing.
+If you encounter any issues while using ppm, please report them at [https://github.com/Stevesuk0/ppm/issues].
 
-本软件为自由软件，遵循 GNU Public License 第二版开源协议。
+This software is free and follows the GNU General Public License v2.
 
-常用命令:
-update       更新软件包列表
-search       通过关键词检索软件包
-download     下载一个软件包与其依赖
-install      安装一个软件包与其依赖
-init         初始化配置文件、软件源
-reset        强制删除 ppm 进程锁
-syncdpkg     从 dpkg 同步已经安装软件包的状态""")
+Common commands:
+update       Update the package list
+search       Search for packages by keyword
+download     Download a package and its dependencies
+install      Install a package and its dependencies
+init         Initialize configuration files and software sources
+reset        Force remove ppm process lock
+syncdpkg     Synchronize the status of installed packages from dpkg""")
         exit()
     command = sys.argv[1]
     if command in 'update':
@@ -363,8 +373,8 @@ syncdpkg     从 dpkg 同步已经安装软件包的状态""")
         lock_disable()
     elif command == 'download' and len(sys.argv) == 3:
         if lock_check():
-            print(f"{error} 无法锁定数据库：文件已存在")
-            print(f"{error} 如果你确认 ppm 没有在运行，请删除 '/var/cache/ppm/ppm.lck'。")
+            print(f"{error} Unable to lock the database: file already exists")
+            print(f"{error} If you are sure ppm is not running, please delete '/var/cache/ppm/ppm.lck'.")
             exit()
         lock_enable()
         dolist = get_package(sys.argv[2], [])
@@ -372,8 +382,8 @@ syncdpkg     从 dpkg 同步已经安装软件包的状态""")
         lock_disable()
     elif command == 'install' and len(sys.argv) == 3:
         if lock_check():
-            print(f"{error} 无法锁定数据库：文件已存在")
-            print(f"{error} 如果你确认 ppm 没有在运行，请删除 '/var/cache/ppm/ppm.lck'。")
+            print(f"{error} Unable to lock the database: file already exists")
+            print(f"{error} If you are sure ppm is not running, please delete '/var/cache/ppm/ppm.lck'.")
             exit()
         lock_enable()
         dolist = get_package(sys.argv[2], [])
@@ -381,7 +391,8 @@ syncdpkg     从 dpkg 同步已经安装软件包的状态""")
         sync_dpkg_status()
         lock_disable()
     else:
-        print(f"{error} 无效命令或缺失参数。")
+        print(f"{error} Invalid command or missing arguments.")
+
 
 def show_version():
     print(f"ppm {version} by @Stevesuk0")
