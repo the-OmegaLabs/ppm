@@ -7,11 +7,6 @@ import requests
 import lzma
 from colorama import init, Fore
 
-#########################################################################################################
-# This version of ppm for OmegaOS Sunset (1.0) Beta is deprecated and will no longer receive maintenance or updates.
-# A new version of ppm is coming soon.   
-#########################################################################################################
-
 # Initialize colorama
 init(autoreset=True)
 
