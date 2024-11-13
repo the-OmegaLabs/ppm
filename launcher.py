@@ -20,11 +20,16 @@ error = f"{Fore.RED}{info_character}{Fore.RESET}"
 # modules_dir = '/opt/ppm/modules'
 # locale_dir = '/opt/ppm/localization'
 version = "1.0"
-launcher_dir = '.'
-cache_dir = '/var/cache/ppm'
-config_dir = '/etc/ppm'
-modules_dir = './modules'
-locale_dir = './localization'
+launcher_dir = os.getcwd()
+cache_dir = f'{os.getcwd()}/devroot/var' # in .gitignore
+config_dir = f'{os.getcwd()}/devroot/etc'
+modules_dir = f'{os.getcwd()}/modules'
+locale_dir = f'{os.getcwd()}/localization'
+
+os.makedirs(cache_dir, exist_ok=True)
+os.makedirs(config_dir, exist_ok=True)
+os.makedirs(modules_dir, exist_ok=True)
+os.makedirs(locale_dir, exist_ok=True)
 
 
 init(autoreset=False) # init colorama
@@ -56,23 +61,25 @@ init         Initialize configuration files and software sources""")
 def main():
     if modules.utils.check_is_root() is False:
         # print("Please run ppm as root permissions.")
-        
-        
+
         path = os.getcwd()
         print(f"{warn} Running ppm as normal user.")
-        return_code = os.system(f"pkexec bash -c 'cd {path}; {" ".join(sys.argv)}'") # run as root
-        if return_code != 256:
-            print(f"{error} Can't running ppm as root.")
-        exit()
+        return_code = os.system(f"pkexec bash -c 'cd {path}; {" ".join(sys.argv)}'") 
+        exit() 
     
 
-    # Check if there are enough arguments provided to the script
     if len(sys.argv) < 2:
         print(f"{error} Not enough arguments provided.")
         print_help()
-        exit(1) # Exit if no command is provided
-    else:
-        print(f"{success} Command line arguments are sufficient.")
+        exit(1) 
+    
+    command = sys.argv[1]
+    args = sys.argv[2:]
+    
+    if command == 'init':
+        if modules.init.init_repo_config(f"{config_dir}/repo.json"):
+            print(f'{success} The configuration file has been initialized.')
+        
 
 if __name__ == "__main__":
     main()
