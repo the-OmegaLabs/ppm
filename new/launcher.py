@@ -4,7 +4,6 @@ from colorama import init, Fore, Style, Back
 import sys
 import os
 import json
-import platform
 
 # 傻逼模块化，狗都不做。
 class modules:
@@ -86,7 +85,7 @@ modules_dir = './modules'
 locale_dir = './localization'
 
 # 世界上最强大的系统检测
-if(platform.system=="Windows"):
+if(sys.platform.startswith('win32')):
     print(f"{error} 你都用包管理器了还鸡巴用windows。操你妈滚回家去吧")
 else:
     pass
