@@ -56,6 +56,7 @@ init         Initialize configuration files and software sources""")
 def main():
     if modules.utils.check_is_root() is False:
         print("Please run ppm as root permissions.")
+        exit()
     
     
 
