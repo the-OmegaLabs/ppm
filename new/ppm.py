@@ -50,7 +50,7 @@ class modules:
         return True
     
     def get_status(self):
-        with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f: # retrieving dpkg information using dpkg-query
+        with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f: # 强大的傻逼查询，脑残但是高效。
             a = f.read().strip().split(',')
             installed = {}
             
@@ -64,7 +64,7 @@ class modules:
 # 模块对象
 Module = modules()
 
-# Define different message types with colored formatting
+# 定义颜色符号。
 info_character = '<>'
 success = f"{Fore.GREEN}{info_character}{Fore.RESET}"
 info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
@@ -81,27 +81,22 @@ version = "1.0"
 launcher_dir = '.'
 cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
-modules_dir = './modules'
-locale_dir = './localization'
 
 # 世界上最强大的系统检测
 if(sys.platform.startswith('win32')):
     print(f"{error} 你都用包管理器了还鸡巴用windows。操你妈滚回家去吧")
+    exit(1)
 else:
     pass
 
-init(autoreset=False) # init colorama
-sys.setrecursionlimit(1500) 
-sys.path.append(modules_dir) # Add custom path for ppm modules
-import modules.dpkg
-import modules.init
-import modules.lock
+init(autoreset=False) # colorama初始化
+sys.setrecursionlimit(1500)
 
 print(f'ppm {version}')
 
 def print_help():
     """
-    Print help information about the usage of the ppm command.
+    打印傻逼帮助信息。
     """
     print(f"""
 Usage: ppm [options] command
@@ -118,9 +113,6 @@ init         Initialize configuration files and software sources""")
 
 def main():
     if Module.root_check() is False:
-        # print("Please run ppm as root permissions.")
-        
-        
         path = os.getcwd()
         print(f"{warn} Running ppm as normal user.")
         args = " ".join(sys.argv)
@@ -128,13 +120,12 @@ def main():
         if return_code != 256:
             print(f"{error} Can't running ppm as root.")
         exit()
-    
 
-    # Check if there are enough arguments provided to the script
+    # 检查有没有足够的傻逼参数。
     if len(sys.argv) < 2:
         print(f"{error} Not enough arguments provided.")
         print_help()
-        exit(1) # Exit if no command is provided
+        exit(1) # 如果没就跟用户爆了。
     else:
         print(f"{success} Command line arguments are sufficient.")
 
