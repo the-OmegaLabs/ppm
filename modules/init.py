@@ -1,10 +1,6 @@
 import json
-import os
 
-def init_config():
-    os.makedirs('/etc/ppm', exist_ok=True)
-    os.chdir('/etc/ppm')
-
+def init_repo_config(path):
     example_repo = [
         {
             'name': 'OmegaOS Base',
@@ -21,7 +17,7 @@ def init_config():
         },
     ]
 
-    with open('repo.json', 'w') as f:
+    with open(path, 'w') as f:
         f.write(json.dumps(example_repo, indent=4, ensure_ascii=False))
     
     return True
