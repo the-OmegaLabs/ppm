@@ -124,7 +124,8 @@ def main():
         
         path = os.getcwd()
         print(f"{warn} Running ppm as normal user.")
-        return_code = os.system(f"pkexec bash -c 'cd {path}; {" ".join(sys.argv)}'") # run as root
+        args = " ".join(sys.argv)
+        return_code = os.system(f"pkexec bash -c 'cd {path}; {args}'")
         if return_code != 256:
             print(f"{error} Can't running ppm as root.")
         exit()
