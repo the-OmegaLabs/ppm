@@ -8,24 +8,24 @@ import platform
 
 # 傻逼模块化，狗都不做。
 class modules():
-    def lock_disable():
+    def lock_disable(self):
             try:
                 os.remove('/var/cache/ppm/lock')
                 return True
             except:
                 return False
             
-    def lock_enable():
+    def lock_enable(self):
         with open('/var/cache/ppm/lock', 'w') as f:
             f.write('')
 
-    def lock_check():
+    def lock_check(self):
         return os.path.exists('/var/cache/ppm/ppm.lck')
     
-    def root_check():
+    def root_check(self):
         return os.getuid() == 0
     
-    def init():
+    def init(self):
         os.makedirs('/etc/ppm', exist_ok=True)
         os.chdir('/etc/ppm')
 
@@ -50,7 +50,7 @@ class modules():
         
         return True
     
-    def get_status():
+    def get_status(self):
         with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f: # retrieving dpkg information using dpkg-query
             a = f.read().strip().split(',')
             installed = {}
