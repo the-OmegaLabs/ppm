@@ -387,6 +387,7 @@ def main():
         return_code = os.system(f"pkexec bash -c 'cd {path}; {args}'")
         if return_code != 256:
             print(f"{error} Can't running ppm as root.")
+    else:
         if len(sys.argv) < 2:
             print(f"""ppm {version}: Missing command
     Usage: ppm [options] command
