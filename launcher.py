@@ -55,9 +55,15 @@ init         Initialize configuration files and software sources""")
 
 def main():
     if modules.utils.check_is_root() is False:
-        print("Please run ppm as root permissions.")
+        # print("Please run ppm as root permissions.")
+        
+        
+        path = os.getcwd()
+        print(f"{warn} Running ppm as normal user.")
+        return_code = os.system(f"pkexec bash -c 'cd {path}; {" ".join(sys.argv)}'") # run as root
+        if return_code != 256:
+            print(f"{error} Can't running ppm as root.")
         exit()
-    
     
 
     # Check if there are enough arguments provided to the script
