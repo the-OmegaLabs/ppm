@@ -7,14 +7,14 @@ import json
 import platform
 
 # 傻逼模块化，狗都不做。
-class modules():
+class modules:
     def lock_disable(self):
             try:
                 os.remove('/var/cache/ppm/lock')
                 return True
             except:
                 return False
-            
+
     def lock_enable(self):
         with open('/var/cache/ppm/lock', 'w') as f:
             f.write('')
@@ -23,7 +23,7 @@ class modules():
         return os.path.exists('/var/cache/ppm/ppm.lck')
     
     def root_check(self):
-        return os.getuid() == 0
+        return os.popen("whoami")=="root"
     
     def init(self):
         os.makedirs('/etc/ppm', exist_ok=True)
