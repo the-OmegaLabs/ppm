@@ -361,21 +361,6 @@ sys.setrecursionlimit(1500)
 
 print(f'ppm {version}')
 
-def print_help():
-    """
-    打印傻逼帮助信息。
-    """
-    print(f"""
-Usage: ppm [options] command
-
-ppm is a command-line package manager currently under testing.
-If you encounter any issues while using ppm, please report them at [https://github.com/Stevesuk0/ppm/issues].
-
-This software is free and follows the GNU General Public License v2.
-
-Common commands:
-init         Initialize configuration files and software sources""")
-
 def show_version():
     print(f"ppm beta {version} by @bzym2 and @stevesuk0")
 
@@ -405,6 +390,7 @@ def main():
     init         Initialize configuration files and software sources
     reset        Force remove ppm process lock
     syncdpkg     Synchronize the status of installed packages from dpkg""")
+            exit()
 
         command = sys.argv[1]
         if command in 'update':
