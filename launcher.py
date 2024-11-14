@@ -4,8 +4,6 @@ from colorama import init, Fore, Style, Back
 import sys
 import os
 
-import modules.utils
-
 # Define different message types with colored formatting
 info_character = '<>'
 success = f"{Fore.GREEN}{info_character}{Fore.RESET}"
@@ -13,13 +11,12 @@ info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
 warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
 error = f"{Fore.RED}{info_character}{Fore.RESET}"
 
-# version = "1.0"
+version = "1.0"
 # launcher_dir = '/opt/ppm'
 # cache_dir = '/var/cache/ppm'
 # config_dir = '/etc/ppm'
 # modules_dir = '/opt/ppm/modules'
 # locale_dir = '/opt/ppm/localization'
-version = "1.0"
 launcher_dir = os.getcwd()
 cache_dir = f'{os.getcwd()}/devroot/var' # in .gitignore
 config_dir = f'{os.getcwd()}/devroot/etc'
@@ -38,6 +35,7 @@ sys.path.append(modules_dir) # Add custom path for ppm modules
 import modules.dpkg
 import modules.init
 import modules.lock
+import modules.utils
 
 print(f'ppm {version}')
 
