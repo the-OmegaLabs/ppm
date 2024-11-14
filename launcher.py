@@ -11,7 +11,7 @@ info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
 warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
 error = f"{Fore.RED}{info_character}{Fore.RESET}"
 
-version = "1.0"
+version = "neo-alpha 1"
 # launcher_dir = '/opt/ppm'
 # cache_dir = '/var/cache/ppm'
 # config_dir = '/etc/ppm'
@@ -36,6 +36,9 @@ import modules.dpkg
 import modules.init
 import modules.lock
 import modules.utils
+
+modules.init.config_path = config_dir
+modules.lock.cache_dir = cache_dir
 
 print(f'ppm {version}')
 
@@ -75,7 +78,7 @@ def main():
     args = sys.argv[2:]
     
     if command == 'init':
-        if modules.init.init_repo_config(f"{config_dir}/repo.json"):
+        if modules.init.init_repo_config():
             print(f'{success} The configuration file has been initialized.')
         
 
