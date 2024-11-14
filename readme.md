@@ -3,9 +3,10 @@
 A simple package manager written in Python, currently supporting the `dpkg` format. 
 
 ## Overview
-Plusto Package Manager is designed to be a straightforward tool for managing packages. While it currently supports Debian packages (`dpkg` format), we are considering adding support for other formats, such as Arch Linux’s AUR in future versions.
+Plusto Package Manager is a sleek, lightweight hybrid package manager for Linux. We are considering expanding support in future versions to include other repositories, such as Arch Linux’s AUR, Fedora’s rpm, and our own Plusto User Repo (PUR). This way, Plusto Package Manager will be able to better cater to the needs of various Linux users.
 
-We are currently refactoring the code. You can use the old version in the `leagcy/` directory.
+The legacy version of Plusto Package Manager (PPM) has several shortcomings, which is why we are in the process of rewriting a new version of PPM to address these issues and improve its functionality.
+We are currently developing new version of ppm. You can try the old version in the `legacy/` directory.
 
 ## Requirements
 - A Linux distribution with `dpkg` support.
