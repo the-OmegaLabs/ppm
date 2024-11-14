@@ -1,6 +1,8 @@
 import json
 
-def init_repo_config(path):
+config_dir = ''
+
+def init_repo_config():
     example_repo = [
         {
             'name': 'OmegaOS Base',
@@ -17,7 +19,7 @@ def init_repo_config(path):
         },
     ]
 
-    with open(path, 'w') as f:
+    with open(config_dir, 'w') as f:
         f.write(json.dumps(example_repo, indent=4, ensure_ascii=False))
     
     return True
