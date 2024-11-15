@@ -3,6 +3,6 @@ test.py
 ./rootfs
 .idea
 
-# .idea/.gitignore
+# for .idea/.gitignore
 /shelf/
 /workspace.xml
