@@ -87,10 +87,14 @@ class manager:
         # Load all package data once into a dictionary
         self.package_data = {}
         for path in os.listdir('/var/cache/ppm/'):
-            if 'json' in path:
-                with open(f"{cache_dir}/omegaos_base.json") as f:
-                    packages = json.loads(f.read())
-                self.package_data.update(packages)
+            try:
+                if 'json' in path:
+                    with open(f"{cache_dir}/omegaos_base.json") as f:
+                        packages = json.loads(f.read())
+                    self.package_data.update(packages)
+            except "FileNotFoundError":
+                try:
+                    os.mkdir('/var/cache/ppm/')
         return self.package_data
 
 
