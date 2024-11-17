@@ -5,7 +5,7 @@ import sys
 import os
 
 # Define different message types with colored formatting
-info_character = '<>'
+info_character = '##'
 success = f"{Fore.GREEN}{info_character}{Fore.RESET}"
 info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
 warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
@@ -74,7 +74,8 @@ def main():
     
     if len(sys.argv) < 2:
         print(f"{error} Not enough arguments provided.")
-        exit(1) 
+        print_help()
+        exit()
     
     command = sys.argv[1]
     args = sys.argv[2:]
@@ -88,6 +89,9 @@ def main():
         print(f"{info} The current system has {installed} packages installed.")
     elif command == 'help':
         print_help()
+    elif command == 'reset':
+        print(f"{success} Successfully removed the lock file.")
+        modules.lock.lock_disable()
     else:
         print(f"{error} Provided command not found.")
 
