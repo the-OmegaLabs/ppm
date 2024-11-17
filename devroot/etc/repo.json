@@ -1,0 +1,15 @@
+[
+    {
+        "name": "OmegaOS Base",
+        "type": "deb",
+        "url": "http://mirrors.ustc.edu.cn/debian",
+        "codename": "testing",
+        "category": "main/binary-amd64"
+    },
+    {
+        "name": "OmegaOS Extra",
+        "type": "ppm",
+        "url": "http://ppm.stevesuk.eu.org/omegaos",
+        "codename": "sunset"
+    }
+]

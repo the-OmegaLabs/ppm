@@ -19,7 +19,7 @@ def init_repo_config():
         },
     ]
 
-    with open(config_dir, 'w') as f:
+    with open(config_dir + '/repo.json', 'w') as f:
         f.write(json.dumps(example_repo, indent=4, ensure_ascii=False))
     
     return True
