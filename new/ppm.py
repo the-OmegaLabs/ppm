@@ -6,6 +6,7 @@ import os
 import json
 import requests
 import lzma
+
 # 傻逼模块化，狗都不做。
 # 定义颜色符号。
 info_character = '<>'
@@ -14,11 +15,15 @@ info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
 warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
 error = f"{Fore.RED}{info_character}{Fore.RESET}"
 get = f"{Fore.CYAN}<>{Fore.RESET}"
+cache_dir = '/var/cache/ppm'
+
 
 class manager:
     def __init__(self):
+        self.cache_dir = '/var/cache/ppm'
         self.all_packages = self.load_all_packages()
-    def parse_packages(self,file_path):
+
+    def parse_packages(self, file_path):
         """Parse package information from the raw package file."""
         with open(file_path) as f:
             data = f.read()
@@ -37,6 +42,7 @@ class manager:
             packages_dicts[package_name] = package_dict
 
         return packages_dicts
+
     def update_packages(self):
         """Update package metadata from the repository."""
         with open('/etc/ppm/repo.json') as f:
@@ -56,7 +62,7 @@ class manager:
                 except:
                     print(
                         f"{error} {repo['url'].split('//')[-1].split('/')[0]} {repo['codename']} {repo['category']} Packages")
-                path = f"{cache_dir}/{repo['name'].lower().replace(' ', '_')}"
+                path = f"{self.cache_dir}/{repo['name'].lower().replace(' ', '_')}"
                 with open(f'{path}.xz', 'wb') as f:
                     f.write(self.response.content)
 
@@ -75,9 +81,7 @@ class manager:
 
         print(f'{success} All package list files have been updated.')
 
-
-
-    def save_packages_to_json(self,ackage_list, path):
+    def save_packages_to_json(self, ackage_list, path):
         """Save the list of packages to a JSON file."""
         self.package_json = json.dumps(self.package_list, ensure_ascii=False, indent=4)
         with open(f'{path}.json', 'w') as f:
@@ -89,23 +93,21 @@ class manager:
         for path in os.listdir('/var/cache/ppm/'):
             try:
                 if 'json' in path:
-                    with open(f"{cache_dir}/omegaos_base.json") as f:
+                    with open(f"{self.cache_dir}/omegaos_base.json") as f:
                         packages = json.loads(f.read())
                     self.package_data.update(packages)
             except "FileNotFoundError":
-                try:
-                    os.mkdir('/var/cache/ppm/')
+                os.mkdir('/var/cache/ppm/')
         return self.package_data
 
-
-    def search(self,packname):
+    def search(self, packname):
         # Directly search in preloaded package data
         for path, package in self.all_packages.items():
             if package.get('Package') == packname:
                 return package
         return None
 
-    def download(self,dolist, repo, install=False):
+    def download(self, dolist, repo, install=False):
         failed = []
         a = 0
         with open('/var/cache/ppm/status.json') as f:
@@ -170,7 +172,7 @@ class manager:
                     print(
                         f"{error} {a} {repo['url'].split('//')[-1].split('/')[0]} {repo['codename']} {repo['category']} {i} {response.status_code}")
 
-    def download_package(self,dolist):
+    def download_package(self, dolist):
         os.makedirs('/var/cache/ppm/downloading/', exist_ok=True)
         with open('/etc/ppm/repo.json') as f:
             repo = json.loads(f.read())
@@ -185,7 +187,7 @@ class manager:
         else:
             pass
 
-    def install_package(self,dolist):
+    def install_package(self, dolist):
         os.makedirs('/var/cache/ppm/downloading/', exist_ok=True)
         os.chdir('/var/cache/ppm/downloading/')
         with open('/etc/ppm/repo.json') as f:
@@ -218,7 +220,7 @@ class manager:
         for i in os.listdir():
             os.remove(i)
 
-    def get_package(self,packname, depend=None):
+    def get_package(self, packname, depend=None):
 
         if not packname:
             return None
@@ -266,11 +268,12 @@ class manager:
                 f.write(json.dumps(dic, indent=4, ensure_ascii=False))
 
         print(f"{info} The current system has {len(dic)} packages installed.")
-    def search_package(self,target):
+
+    def search_package(self, target):
         """Search for packages in the JSON file that match the target."""
         found = 0
 
-        with open(f"{cache_dir}/omegaos_base.json") as f:
+        with open(f"{self.cache_dir}/omegaos_base.json") as f:
             packages = json.loads(f.read())
         for pkg in packages:
             if target in packages[pkg].get('Package', ''):
@@ -285,11 +288,11 @@ class manager:
 
 class modules:
     def lock_disable(self):
-            try:
-                os.remove('/var/cache/ppm/lock')
-                return True
-            except:
-                return False
+        try:
+            os.remove('/var/cache/ppm/lock')
+            return True
+        except:
+            return False
 
     def lock_enable(self):
         with open('/var/cache/ppm/lock', 'w') as f:
@@ -297,10 +300,10 @@ class modules:
 
     def lock_check(self):
         return os.path.exists('/var/cache/ppm/ppm.lck')
-    
+
     def root_check(self):
-        return os.popen("whoami")=="root"
-    
+        return os.popen("whoami") == "root"
+
     def init(self):
         os.makedirs('/etc/ppm', exist_ok=True)
         os.chdir('/etc/ppm')
@@ -316,28 +319,29 @@ class modules:
             {
                 'name': 'OmegaOS Extra',
                 'type': 'ppm',
-                'url':  'http://ppm.stevesuk.eu.org/omegaos',
+                'url': 'http://ppm.stevesuk.eu.org/omegaos',
                 'codename': 'sunset',
             },
         ]
 
         with open('repo.json', 'w') as f:
             f.write(json.dumps(example_repo, indent=4, ensure_ascii=False))
-        
+
         print(f"{success} Successfully initialized the configuration file at \"/etc/ppm/\"")
-    
+
     def get_status(self):
-        with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f: # 强大的傻逼查询，脑残但是高效。
+        with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f:  # 强大的傻逼查询，脑残但是高效。
             a = f.read().strip().split(',')
             installed = {}
-            
+
             for i in a:
                 parts = i.split('/')
-                if len(parts) == 2 and parts[1]: 
+                if len(parts) == 2 and parts[1]:
                     installed[parts[0]] = parts[1]
-            
+
             return installed
-        
+
+
 # 模块对象
 Module = modules()
 Manager = manager()
@@ -350,23 +354,24 @@ Manager = manager()
 # locale_dir = '/opt/ppm/localization'
 version = "1.0"
 launcher_dir = '.'
-cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
 
 # 世界上最强大的系统检测
-if(sys.platform.startswith('win32')):
+if (sys.platform.startswith('win32')):
     print(f"{error} 你都用包管理器了还鸡巴用windows。操你妈滚回家去吧")
     exit(1)
 else:
     pass
 
-init(autoreset=False) # colorama初始化
+init(autoreset=False)  # colorama初始化
 sys.setrecursionlimit(1500)
 
 print(f'ppm {version}')
 
+
 def show_version():
     print(f"ppm beta {version} by @bzym2 and @stevesuk0")
+
 
 def main():
     if Module.root_check() is False:
