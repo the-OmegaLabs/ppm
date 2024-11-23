@@ -288,7 +288,7 @@ class manager:
     """New Features by bigdickbzym2🍥🍥🍥🍥"""
 
     def switch_repo(self, repo):
-        if (os.path.exists("/etc/ppm/repo.json") == false):
+        if not (os.path.exists("/etc/ppm/repo.json")):
             print(
                 f"{error} you haven't created the repo file, plz run 'ppm init' to create the repo file and initiaze ppm")
         else:
