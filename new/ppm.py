@@ -383,6 +383,7 @@ config_dir = '/etc/ppm'
 
 # 世界上最强大的系统检测
 if (sys.platform.startswith('win32')):
+    # 好吧当我没说XD，我搓了windows兼容版的
     print(f"{error} 你都用包管理器了还鸡巴用windows。操你妈滚回家去吧")
     exit(1)
 else:
