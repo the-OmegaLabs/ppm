@@ -285,6 +285,31 @@ class manager:
         else:
             print(f'{success} {found} packages found.')
 
+    """New Features by bigdickbzym2🍥🍥🍥🍥"""
+
+    def switch_repo(self, repo):
+        if (os.path.exists("/etc/ppm/repo.json") == false):
+            print(
+                f"{error} you haven't created the repo file, plz run 'ppm init' to create the repo file and initiaze ppm")
+        else:
+            changed_repo = [
+                {
+                    'name': 'OmegaOS Base',
+                    'type': 'deb',
+                    'url': f'https://{repo}/debian/',
+                    'codename': 'testing',
+                    'category': 'main/binary-amd64',
+                },
+                {
+                    'name': 'OmegaOS Extra(omg this is fucking useless i want to delete this fucking repo)',
+                    'type': 'ppm',
+                    'url': 'http://ppm.stevesuk.eu.org/omegaos',
+                    'codename': 'sunset',
+                },
+            ]
+            with open('/etc/ppm/repo.json', 'w') as f:
+                f.write(json.dumps(changed_repo, indent=4, ensure_ascii=False))
+
 
 class modules:
     def lock_disable(self):
@@ -312,12 +337,12 @@ class modules:
             {
                 'name': 'OmegaOS Base',
                 'type': 'deb',
-                'url': 'http://mirrors.ustc.edu.cn/debian',
+                'url': 'https://ftp.debian.org/debian/',
                 'codename': 'testing',
                 'category': 'main/binary-amd64',
             },
             {
-                'name': 'OmegaOS Extra',
+                'name': 'OmegaOS Extra(omg this is fucking useless i want to delete this fucking repo)',
                 'type': 'ppm',
                 'url': 'http://ppm.stevesuk.eu.org/omegaos',
                 'codename': 'sunset',
@@ -352,7 +377,7 @@ Manager = manager()
 # config_dir = '/etc/ppm'
 # modules_dir = '/opt/ppm/modules'
 # locale_dir = '/opt/ppm/localization'
-version = "1.0"
+version = "1.1"
 launcher_dir = '.'
 config_dir = '/etc/ppm'
 
@@ -370,7 +395,7 @@ print(f'ppm {version}')
 
 
 def show_version():
-    print(f"ppm beta {version} by @bzym2 and @stevesuk0")
+    print(f"ppm alpha {version} by @bzym2 and @stevesuk0")
 
 
 def main():
@@ -434,6 +459,8 @@ def main():
             Manager.install_package(dolist)
             Manager.sync_dpkg_status()
             Module.lock_disable()
+        elif command == 'switchrepo' and len(sys.argv) == 3:
+            Manager.switch_repo(sys.argv[2])
         else:
             print(f"{error} Invalid command or missing arguments.")
 
