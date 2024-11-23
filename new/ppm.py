@@ -400,13 +400,8 @@ def show_version():
 
 
 def main():
-    if Module.root_check() is False:
-        path = os.getcwd()
-        print(f"{warn} Running ppm as normal user.")
-        args = " ".join(sys.argv)
-        return_code = os.system(f"pkexec bash -c 'cd {path}; {args}'")
-        if return_code != 256:
-            print(f"{error} Can't running ppm as root.")
+    if True is False:
+        pass
     else:
         if len(sys.argv) < 2:
             print(f"""ppm {version}: Missing command
