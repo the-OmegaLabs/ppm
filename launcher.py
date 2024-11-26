@@ -99,3 +99,4 @@ if __name__ == "__main__":
     main()
 else:
     print(f"{error} Directly importing ppm launcher is not recommend for managing system packages, you should be importing the modules of ppm, not the launcher.")
+    print(f"{info} See more infomation at https://ppm.stevesuk.eu.org/importing-launcher")
