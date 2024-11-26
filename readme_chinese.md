@@ -2,7 +2,7 @@
 
 ## [English Documentation / 英文文档](readme.md)
 
-Plusto 包管理器是一个 *轻量级、可扩展、易用且可混合* 的包管理器，使用 Python 编写。它用户友好，高度可定制，且设计时考虑到了更方便的扩展性。目前，它支持 `dpkg` 和 `winget` 格式。
+Plusto 包管理器是一个 *轻量级、可扩展、易用且可混合* 的包管理器，使用 Python 编写。它对用户友好，高度可定制，且设计时考虑到了更方便的扩展性。目前，它支持 `dpkg` 和 `winget` 格式。
 
 ### ⚠️ Windows 用户注意
 如果你是 Windows 用户，请使用 Plusto 包管理器的 winget 版本（此为概念版本）（位于 `/windows` 目录）。
