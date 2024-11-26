@@ -15,7 +15,7 @@ If you are a Windows user, please use the winget version of Plusto Package Manag
 
 Plusto Package Manager is a hybrid package manager for Linux, currently supporting the `dpkg` format. We are conducting tests, and future versions are planned to merge various Linux package formats, such as Debian's `.deb`, Fedora's `.rpm`, and others, so that Plusto Package Manager will support a broader range of formats, offering better compatibility and flexibility for different Linux users.
 
-The **Legacy Version** of ppm had several shortcomings, which is why we are in the process of rewriting the new version to address these issues and enhance functionality. You can try the old version, they are in the `/legacy/` directory, Only can running on Debian-like linux distro.
+The **Legacy Version** of ppm had several shortcomings, which is why we are in the process of rewriting the new version to address these issues and enhance functionality. You can try the old version, they are in the `/legacy/` directory, Only can running on Debian-like Linux distro.
 
 You can also try the **Concept Version** to enjoying the latest feature, they are in `/new/` directory. Note: We have not tested this on all Linux distributions yet, so please report any bugs or issues
 
