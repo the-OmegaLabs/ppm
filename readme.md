@@ -2,6 +2,10 @@
 
 ## [Chinese Documentation / 中文文档](readme_chinese.md)
 
+<div style="text-align: center;">
+  <img src="https://ppm.stevesuk.eu.org/icon.png" width="300px" />
+</div>
+
 Plusto Package Manager is a *lightweight, extensible, easy-to-use, and mixable* package manager written in Python. It is user-friendly, highly customizable, and designed with easlier extensibility in mind. Currently, it supports both the `dpkg` and `winget` formats.
 
 ### ⚠️ Attention for Windows Users
