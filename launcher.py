@@ -4,6 +4,9 @@ from colorama import init, Fore, Style, Back
 import sys
 import os
 
+init(autoreset=False) # init colorama
+sys.setrecursionlimit(1500) 
+
 # Define different message types with colored formatting
 info_character = '##'
 success = f"{Fore.GREEN}{info_character}{Fore.RESET}"
@@ -28,13 +31,12 @@ os.makedirs(launcher_dir, exist_ok=True)
 os.makedirs(locale_dir, exist_ok=True)
 
 
-init(autoreset=False) # init colorama
-sys.setrecursionlimit(1500) 
+
 sys.path.append(launcher_dir) # Add custom path for ppm modules
+import modules.authing
 import modules.dpkg
 import modules.init
 import modules.lock
-import modules.utils
 
 modules.init.config_dir = config_dir
 modules.lock.cache_dir = cache_dir
@@ -64,10 +66,8 @@ refresh      Synchronize the dpkg database""")
 def main():
     if modules.utils.check_is_root() is False:
         # print("Please run ppm as root permissions.")
-
-        path = os.getcwd()
         print(f"{warn} Running ppm as normal user.")
-        return_code = os.system(f"sudo bash -c 'cd {path}; /bin/python3 {" ".join(sys.argv)}'") 
+        modules.authing.run_as_root({" ".join(sys.argv)})
         exit() 
     
 
