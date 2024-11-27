@@ -1,8 +1,6 @@
-<img width="150" height="150" align="left" style="float: left; margin: 0 10px 0 0;" alt="MS-DOS logo" src="https://ppm.stevesuk.eu.org/icon.png">   
-
-
-# Plusto Package Manager
-
+<img align="left" width="150" height="150" align="left" style="float: left; margin: 0 10px 0 0;" alt="MS-DOS logo" src="https://ppm.stevesuk.eu.org/icon.png"> <h1>Plusto Package Manager</h1>
+<img align="left" src="https://img.shields.io/badge/Made%20with-Python-purple?style=for-the-badge&logo=python&logoColor=white"><img src="https://img.shields.io/badge/Required-Linux-purple?style=for-the-badge&logo=linux&logoColor=white">
+</br>
 ## [Chinese Documentation / 中文文档](readme_chinese.md)
 
 Plusto Package Manager is a *lightweight, extensible, easy-to-use, and mixable* package manager written in Python. It is user-friendly, highly customizable, and designed with easlier extensibility in mind. Currently, it supports both the `dpkg` and `winget` formats.
