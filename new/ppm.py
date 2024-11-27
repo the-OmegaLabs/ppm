@@ -19,6 +19,7 @@ cache_dir = '/var/cache/ppm'
 
 class manager:
     def __init__(self):
+        self.width = None
         self.cache_dir = '/var/cache/ppm'
         self.all_packages = self.load_all_packages()
 
@@ -114,7 +115,7 @@ class manager:
         for i in dolist:
             terminal_size = os.get_terminal_size()
             width = int(terminal_size.columns * 0.5)
-
+            self.width = width
             a += 1
             url = f"{repo['url']}/{self.search(i)['Filename']}"
             sys.stdout.write(
@@ -216,7 +217,7 @@ class manager:
         for i in os.listdir():
             if '.dpkg' in i:
                 a += 1
-                sys.stdout.write(f"{info} ({a}/{countdeb}) [{'█' * int((a / countdeb) * width)}{int(((countdeb - a) / countdeb) * width) * ' '}] {i}\r")
+                sys.stdout.write(f"{info} ({a}/{countdeb}) [{'█' * int((a / countdeb) * self.width)}{int(((countdeb - a) / countdeb) * self.width) * ' '}] {i}\r")
                 sys.stdout.flush()
                 try:
                     os.system(f'dpkg -i {i}')
@@ -238,7 +239,7 @@ class manager:
                 os.system(f'apt-get remove {i}')
                 a += 1
                 sys.stdout.write(
-                    f"{info} ({a}/{len(dolist)}) [{'█' * int((a / len(dolist)) * width)}{int(((len(dolist) - a) / len(dolist)) * width) * ' '}] {i}\r")
+                    f"{info} ({a}/{len(dolist)}) [{'█' * int((a / len(dolist)) * self.width)}{int(((len(dolist) - a) / len(dolist)) * self.width) * ' '}] {i}\r")
                 sys.stdout.flush()
             print(f"{info} 卸载完成。")
         else:
