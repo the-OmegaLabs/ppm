@@ -14,7 +14,7 @@ info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
 warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
 error = f"{Fore.RED}{info_character}{Fore.RESET}"
 
-version = "0.1.1"
+version = "0.2"
 launcher_dir = '/opt/ppm'
 cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
