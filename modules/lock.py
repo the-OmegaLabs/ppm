@@ -2,16 +2,16 @@ import os
 
 cache_dir = ''
 
-def lock_disable():
+def disable():
     try:
         os.remove(cache_dir + '/ppm.lck')
         return True
     except:
         return False
 
-def lock_enable():
+def enable():
     with open(cache_dir + '/ppm.lck', 'w') as f:
         f.write('')
 
-def lock_check():
+def check():
     return os.path.exists(cache_dir + '/ppm.lck')

@@ -2,18 +2,18 @@ import json
 
 config_dir = ''
 
-def init_repo_config():
+def initRepoConfig():
     example_repo = [
         {
-            'name': 'OmegaOS Base',
-            'type': 'deb',
-            'url': 'http://mirrors.ustc.edu.cn/debian',
+            'name': 'System Base',
+            'type': 'dpkg',
+            'url': 'http://mirrors.sdu.edu.cn/debian',
             'codename': 'testing',
             'category': 'main/binary-amd64',
         },
         {
-            'name': 'OmegaOS Extra',
-            'type': 'ppm',
+            'name': 'Plusto User Repo',
+            'type': 'pur',
             'url':  'http://ppm.stevesuk.eu.org/omegaos',
             'codename': 'sunset',
         },

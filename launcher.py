@@ -14,33 +14,30 @@ info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
 warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
 error = f"{Fore.RED}{info_character}{Fore.RESET}"
 
-version = "0.1"
+version = "0.1.1"
 launcher_dir = '/opt/ppm'
 cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
 locale_dir = '/opt/ppm/localization'
-# launcher_dir = os.getcwd()
-# cache_dir = f'{os.getcwd()}/devroot/var' # in .gitignore
-# config_dir = f'{os.getcwd()}/devroot/etc'
-# modules_dir = f'{os.getcwd()}/modules'
-# locale_dir = f'{os.getcwd()}/localization'
 
 os.makedirs(cache_dir, exist_ok=True)
 os.makedirs(config_dir, exist_ok=True)
 os.makedirs(launcher_dir, exist_ok=True)
 os.makedirs(locale_dir, exist_ok=True)
 
-
-
 sys.path.append(launcher_dir) # Add custom path for ppm modules
-import modules.authing
-import modules.dpkg
+import modules
+import modules.auth
+import modules.managing
 import modules.init
+import modules.config
 import modules.lock
 
 modules.init.config_dir = config_dir
 modules.lock.cache_dir = cache_dir
-modules.dpkg.cache_dir = cache_dir
+modules.managing.cache_dir = cache_dir
+modules.managing.config_dir = config_dir
+modules.config.config_dir = config_dir
 
 print(f'ppm {version}')
 
@@ -59,18 +56,17 @@ This software is free and follows the GNU General Public License v2.
 Common commands:
 init         Initialize configuration files and software sources
 reset        Force remove ppm process lock
-refresh      Synchronize the dpkg database""")
-
-
+refresh      Synchronize the dpkg database
+update       Update the package list
+clean        Clean ppm cache files""")
 
 def main():
-    if modules.utils.check_is_root() is False:
+
+    if modules.auth.check_is_root() is False:
         # print("Please run ppm as root permissions.")
         print(f"{warn} Running ppm as normal user.")
-        modules.authing.run_as_root({" ".join(sys.argv)})
+        modules.auth.run_as_root({" ".join(sys.argv)})
         exit() 
-    
-
     
     if len(sys.argv) < 2:
         print(f"{error} Not enough arguments provided.")
@@ -81,17 +77,40 @@ def main():
     args = sys.argv[2:]
     
     if command == 'init':
-        if modules.init.init_repo_config():
+        if modules.init.initRepoConfig():
             print(f'{success} The configuration file has been initialized.')
+    
+    elif command == 'clean':
+        cleaning = modules.managing.cleanCacheFolder()
+        if cleaning[0]: # bool
+            if cleaning[1] == 0:
+                print(f"{success} Nothing to clean.") 
+            else:
+                print(f"{success} Successfully clean cache files.")
+        else:
+            print(f"{error} Failed to clean cache files.")
+
     elif command == 'refresh':
         print(f"{info} Refreshing...")
-        installed = modules.dpkg.refresh_installed_dpkg()
-        print(f"{info} The current system has {installed} packages installed.")
+        installed = modules.managing.dpkg_refreshInstalled()
+        print(f"{info} The current system has {installed} dpkg packages installed.")
+
     elif command == 'help':
         print_help()
+
+    elif command == 'update':
+        repos = modules.config.getRepofromConfiguation()
+
+        for repo in repos:
+            print(repo)
+            modules.managing.updateMetadata(repo)
+
     elif command == 'reset':
-        print(f"{success} Successfully removed the lock file.")
-        modules.lock.lock_disable()
+        if modules.lock.disable():
+            print(f"{success} Successfully removed the lock file.")
+        else:
+            print(f"{error} Failed to remove the lock file.")
+        
     else:
         print(f"{error} Provided command not found.")
 
