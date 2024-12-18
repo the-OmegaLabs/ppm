@@ -14,7 +14,7 @@ info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
 warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
 error = f"{Fore.RED}{info_character}{Fore.RESET}"
 
-version = "0.2"
+version = "0.1.1"
 launcher_dir = '/opt/ppm'
 cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
@@ -61,13 +61,6 @@ update       Update the package list
 clean        Clean ppm cache files""")
 
 def main():
-
-    if modules.auth.check_is_root() is False:
-        # print("Please run ppm as root permissions.")
-        print(f"{warn} Running ppm as normal user.")
-        modules.auth.run_as_root({" ".join(sys.argv)})
-        exit() 
-    
     if len(sys.argv) < 2:
         print(f"{error} Not enough arguments provided.")
         print_help()
@@ -84,9 +77,9 @@ def main():
         cleaning = modules.managing.cleanCacheFolder()
         if cleaning[0]: # bool
             if cleaning[1] == 0:
-                print(f"{success} Nothing to clean.") 
+                print(f"{info} Nothing to clean.") 
             else:
-                print(f"{success} Successfully clean cache files.")
+                print(f"{success} Successfully clean {cleaning[1]} cache files.")
         else:
             print(f"{error} Failed to clean cache files.")
 
@@ -102,7 +95,7 @@ def main():
         repos = modules.config.getRepofromConfiguation()
 
         for repo in repos:
-            print(repo)
+            print(f"{repo['name']}")
             modules.managing.updateMetadata(repo)
 
     elif command == 'reset':
@@ -115,6 +108,12 @@ def main():
         print(f"{error} Provided command not found.")
 
 if __name__ == "__main__":
+    if modules.auth.checkIsRoot() is False:
+            # print("Please run ppm as root permissions.")
+            print(f"{warn} Running ppm as normal user.")
+            modules.auth.run_as_root(" ".join(sys.argv[1:]))
+            exit() 
+    
     main()
 else:
     print(f"{error} Directly importing ppm launcher is not recommend for managing system packages, you should be importing the modules of ppm, not the launcher.")
