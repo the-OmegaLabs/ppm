@@ -5,6 +5,7 @@ import requests
 import os
 import base64
 import lzma
+import io
 
 cache_dir = ''
 config_dir = ''
@@ -38,49 +39,18 @@ def dpkg_refreshInstalled(): # It will return how many dpkg package you installe
     return len(installed)
 
 def updateMetadata(repo: dict):
-    """
-    for repo in repos:
-        if repo['type'] == 'deb':
-            print(f"{info} Updating package list: {repo['name']} ({repo['type']})...")
-            print(f"{info} {repo['url'].split('//')[-1].split('/')[0]} {repo['codename']} {repo['category']} Packages", end='\r')
-            url = f"{repo['url']}/dists/{repo['codename']}/{repo['category']}/Packages.xz"
-            try:
-                response = requests.get(url)
-                print(f"{get} {repo['url'].split('//')[-1].split('/')[0]} {repo['codename']} {repo['category']} Packages")
-            except:
-                print(f"{error} {repo['url'].split('//')[-1].split('/')[0]} {repo['codename']} {repo['category']} Packages")
-            path = f"{cache_dir}/{repo['name'].lower().replace(' ', '_')}"
-            with open(f'{path}.xz', 'wb') as f:
-                f.write(response.content)
-
-            print(f"{info} Converting apt package list \"{repo['name']}\" to ppm format.")
-
-
-            with lzma.open(f'{path}.xz') as compressed:
-                with open(f'{path}.raw', 'wb') as uncompressed:
-                    uncompressed.write(compressed.read())
-
-            package_list = parse_packages(f'{path}.raw')
-            save_packages_to_json(package_list, path)
-            print(f"{success} Successfully updated {repo['name']} ({repo['type']}).")
-            
-        else:
-            print(f"{warn} Unable to parse package source {repo['name']} ({repo['type']}), ignoring this item.")
-
-    print(f'{success} All package list files have been updated.')"""
-
     if repo['type'] == 'dpkg':
         url = f"{repo['url']}/dists/{repo['codename']}/{repo['category']}/Packages.xz"
         try:
             response = requests.get(url)
-        except:
-            return (False, response)
+            response.raise_for_status()
+        except Exception as f:
+            return False, f, response
+        
         path = f"{cache_dir}/{base64.b64encode(repo['name'].encode('utf-8')).decode()}"
-        with open(f'{path}.xz', 'wb') as f:
-            f.write(response.content)
                 
-        with lzma.open(f'{path}.xz') as compressed:
-            data = compressed.read().decode()
+        with lzma.open(io.BytesIO(response.content)) as compressed:
+            data = compressed.read().decode('utf-8')
         
         packages = data.strip().split('\n\n')
         packages_dicts = {}
@@ -95,5 +65,8 @@ def updateMetadata(repo: dict):
             package_name = package_dict.get("Package", "unknown_package")
             packages_dicts[package_name] = package_dict
 
-        with open(f'{path}.json', 'w') as f:
+        with open(f'{path}.ppmlist', 'w') as f:
             f.write(json.dumps(packages_dicts, ensure_ascii=False, indent=4))
+        return True, None, response
+    else:
+        return False, None, None

@@ -41,11 +41,7 @@ modules.config.config_dir = config_dir
 
 print(f'ppm {version}')
 
-def print_help():
-    """
-    Print help information about the usage of the ppm command.
-    """
-    print(f"""
+help_text = """
 Usage: ppm [options] command
 
 ppm is a command-line package manager currently under testing.
@@ -58,12 +54,12 @@ init         Initialize configuration files and software sources
 reset        Force remove ppm process lock
 refresh      Synchronize the dpkg database
 update       Update the package list
-clean        Clean ppm cache files""")
+clean        Clean ppm cache files"""
 
 def main():
     if len(sys.argv) < 2:
         print(f"{error} Not enough arguments provided.")
-        print_help()
+        print(help_text)
         exit()
     
     command = sys.argv[1]
@@ -89,14 +85,18 @@ def main():
         print(f"{info} The current system has {installed} dpkg packages installed.")
 
     elif command == 'help':
-        print_help()
+        print(help_text)
 
     elif command == 'update':
         repos = modules.config.getRepofromConfiguation()
-
+        print(f"{info} Found {len(repos)} repositories from configuration...")
         for repo in repos:
-            print(f"{repo['name']}")
-            modules.managing.updateMetadata(repo)
+            print(f"{info} Updating package list: {repo['name']} ({repo['type']})...", end='')
+            sys.stdout.flush()
+            if modules.managing.updateMetadata(repo)[0]:
+                print(f"\r{success} Updated package list: {repo['name']} ({repo['type']})...")
+            else:
+                print(f"\r{warn} Unable to parse repo \"{repo['name']} ({repo['type']})\", ignoring this item.")
 
     elif command == 'reset':
         if modules.lock.disable():
@@ -109,12 +109,11 @@ def main():
 
 if __name__ == "__main__":
     if modules.auth.checkIsRoot() is False:
-            # print("Please run ppm as root permissions.")
-            print(f"{warn} Running ppm as normal user.")
-            modules.auth.run_as_root(" ".join(sys.argv[1:]))
-            exit() 
+        print(f"{warn} Running ppm as normal user.")
+        modules.auth.run_as_root(" ".join(sys.argv[1:]))
+        exit() 
     
     main()
 else:
     print(f"{error} Directly importing ppm launcher is not recommend for managing system packages, you should be importing the modules of ppm, not the launcher.")
-    print(f"{info} See more infomation at https://ppm.stevesuk.eu.org/importing-launcher")
+    print(f"{info} See more infomation at https://wiki.ppm.mom/importing-launcher")
