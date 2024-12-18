@@ -19,3 +19,5 @@ You can also try the **Concept Version** to enjoying the latest feature, they ar
 ## Installing
 
 See [Getting Started](https://ppm.stevesuk.eu.org/getting-started.html) in our website.
+
+![Alt](https://repobeats.axiom.co/api/embed/28cf570b81bed278b472ceb028fbc9ffbb84715f.svg "Repobeats analytics image")
