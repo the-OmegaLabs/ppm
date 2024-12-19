@@ -3,6 +3,7 @@
 from colorama import init, Fore, Style, Back
 import sys
 import os
+import time
 
 init(autoreset=False) # init colorama
 sys.setrecursionlimit(1500) 
@@ -29,14 +30,13 @@ sys.path.append(launcher_dir) # Add custom path for ppm modules
 import modules
 import modules.auth
 import modules.managing
-import modules.init
 import modules.config
 import modules.lock
 
-modules.init.config_dir = config_dir
 modules.lock.cache_dir = cache_dir
 modules.managing.cache_dir = cache_dir
 modules.managing.config_dir = config_dir
+modules.config.cache_dir = cache_dir
 modules.config.config_dir = config_dir
 
 print(f'ppm {version}')
@@ -54,6 +54,7 @@ init         Initialize configuration files and software sources
 reset        Force remove ppm process lock
 refresh      Synchronize the dpkg database
 update       Update the package list
+search       Search a packages by keyword
 clean        Clean ppm cache files"""
 
 def main():
@@ -66,11 +67,26 @@ def main():
     args = sys.argv[2:]
     
     if command == 'init':
-        if modules.init.initRepoConfig():
+        if modules.config.initRepoConfig():
             print(f'{success} The configuration file has been initialized.')
     
+    elif command == 'search':
+        start = time.time()
+        repolist = modules.config.getRepofromCache() 
+        for repo in repolist:
+            for package_name in args:
+                packinfo = modules.managing.searchPackage(package_name, repo)
+                if packinfo:
+                    print(f"{packinfo['Package']}, {packinfo['Version']}")
+        
+        # with os.popen(f"find.go {args[-1]}") as f: print(f.read(), end='')
+
+        print(round((time.time() - start) * 1000, 1), 'ms')
+
+
+
     elif command == 'clean':
-        cleaning = modules.managing.cleanCacheFolder()
+        cleaning = modules.config.cleanCacheFolder()
         if cleaning[0]: # bool
             if cleaning[1] == 0:
                 print(f"{info} Nothing to clean.") 

@@ -10,17 +10,7 @@ import io
 cache_dir = ''
 config_dir = ''
 
-def cleanCacheFolder():
-    try:
-        os.chdir(cache_dir)
-        filelist = os.listdir()
-        for i in filelist:
-            os.remove(i)
-        return (True, len(filelist))
-    except:
-        return (False, 0)
-
-def dpkg_getInstalled(): # return     
+def dpkg_getInstalled(): # return package with version
     with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f: # retrieving dpkg information using dpkg-query
         a = f.read().strip().split(',')
         installed = {}
@@ -38,20 +28,30 @@ def dpkg_refreshInstalled(): # It will return how many dpkg package you installe
         f.write(json.dumps(installed, ensure_ascii=False, indent=4))
     return len(installed)
 
+def searchPackage(packname: str, repo: dict):
+    repo_filepath = f"{cache_dir}/{base64.b64encode(repo['name'].encode()).decode()}.ppmlist"
+
+    with open(repo_filepath) as f:
+        packages = json.loads(f.read())
+
+    return packages.get(packname, None)
+
 def updateMetadata(repo: dict):
     if repo['type'] == 'dpkg':
         url = f"{repo['url']}/dists/{repo['codename']}/{repo['category']}/Packages.xz"
         try:
             response = requests.get(url)
-            response.raise_for_status()
         except Exception as f:
             return False, f, response
         
         path = f"{cache_dir}/{base64.b64encode(repo['name'].encode('utf-8')).decode()}"
-                
-        with lzma.open(io.BytesIO(response.content)) as compressed:
-            data = compressed.read().decode('utf-8')
         
+        try:
+            with lzma.open(io.BytesIO(response.content)) as compressed:  
+                data = compressed.read().decode('utf-8')
+        except Exception as f:
+            return False, f, response
+
         packages = data.strip().split('\n\n')
         packages_dicts = {}
 
