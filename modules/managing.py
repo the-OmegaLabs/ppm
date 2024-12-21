@@ -5,10 +5,14 @@ import requests
 import os
 import base64
 import lzma
+import re
 import io
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 cache_dir = ''
 config_dir = ''
+dependency_cache = {}
+all_packages_cache = {}
 
 def dpkg_getInstalled(): # return package with version
     with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f: # retrieving dpkg information using dpkg-query
@@ -28,13 +32,61 @@ def dpkg_refreshInstalled(): # It will return how many dpkg package you installe
         f.write(json.dumps(installed, ensure_ascii=False, indent=4))
     return len(installed)
 
-def searchPackage(packname: str, repo: dict):
-    repo_filepath = f"{cache_dir}/{base64.b64encode(repo['name'].encode()).decode()}.ppmlist"
 
+def loadPackages(repo: dict):
+    global all_packages_cache
+    all_packages_cache = {}
+    repo_filepath = f"{cache_dir}/{base64.b64encode(repo['name'].encode()).decode()}.ppmlist"
+    
     with open(repo_filepath) as f:
         packages = json.loads(f.read())
+    
+    all_packages_cache = packages
 
-    return packages.get(packname, None)
+def searchPackage(packname: str):
+    return all_packages_cache.get(packname, None)
+
+def extractPackageNames(depends_str: str):
+    package_names = depends_str.split(",")
+    
+    cleaned_package_names = set()  
+    for package in package_names:
+        parts = package.strip().split()
+        
+        if parts:
+            cleaned_package_names.add(parts[0])  
+    
+    return cleaned_package_names
+
+def getDependencies(packname: str, visited=None):
+    if visited is None:
+        visited = set()
+
+    if packname in visited:
+        return set()
+
+    visited.add(packname)
+
+    package_info = searchPackage(packname)
+    if not package_info:
+        return set()
+
+    depends_str = package_info.get("Depends", "")
+    if not depends_str:
+        return set()
+
+    dependencies = extractPackageNames(depends_str)
+
+    all_dependencies = set(dependencies)
+
+    for dep in dependencies:
+        all_dependencies.update(getDependencies(dep, visited))
+
+    return list(all_dependencies)
+
+def downloadPackage(packname: str):
+    dependencies = getDependencies(packname)
+    return dependencies
 
 def updateMetadata(repo: dict):
     if repo['type'] == 'dpkg':

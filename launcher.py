@@ -70,14 +70,27 @@ def main():
         if modules.config.initRepoConfig():
             print(f'{success} The configuration file has been initialized.')
     
+    elif command == 'download':
+        start = time.time()
+        repolist = modules.config.getRepofromCache() 
+        for repo in repolist:
+            modules.managing.loadPackages(repo) # precaching
+            for package_name in args:
+                packinfo = modules.managing.downloadPackage(package_name)
+                for i in packinfo:
+                    print(i)
+
+        print(round((time.time() - start) * 1000, 1), 'ms')
+
     elif command == 'search':
         start = time.time()
         repolist = modules.config.getRepofromCache() 
         for repo in repolist:
+            modules.managing.loadPackages(repo) # precaching
             for package_name in args:
-                packinfo = modules.managing.searchPackage(package_name, repo)
+                packinfo = modules.managing.searchPackage(package_name)
                 if packinfo:
-                    print(f"{packinfo['Package']}, {packinfo['Version']}")
+                    print(f"{repo['name']}: {packinfo['Package']}, {packinfo['Version']}")
         
         # with os.popen(f"find.go {args[-1]}") as f: print(f.read(), end='')
 

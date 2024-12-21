@@ -29,9 +29,6 @@ def getRepofromCache():
     repolist = [repo for repo in config_repolist if repo['name'] in cachelist]
 
     return repolist
-
-
-    
     
 
 def initRepoConfig():
@@ -40,7 +37,7 @@ def initRepoConfig():
             'name': 'System Base',
             'type': 'dpkg',
             'url': 'http://mirrors.sdu.edu.cn/debian',
-            'codename': 'testing',
+            'codename': 'bookworm',
             'category': 'main/binary-amd64',
         },
         {
