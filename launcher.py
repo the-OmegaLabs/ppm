@@ -3,42 +3,39 @@
 from colorama import init, Fore, Style, Back
 import sys
 import os
+import utils.pconfig as P
 
 init(autoreset=False) # init colorama
-sys.setrecursionlimit(1500) 
+sys.setrecursionlimit(1500)
 
 # Define different message types with colored formatting
-info_character = '##'
-success = f"{Fore.GREEN}{info_character}{Fore.RESET}"
-info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
-warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
-error = f"{Fore.RED}{info_character}{Fore.RESET}"
+success = P.success
+info = P.info
+warn = P.warn
+error = P.error
 
-version = "0.2"
-launcher_dir = '/opt/ppm'
-cache_dir = '/var/cache/ppm'
-config_dir = '/etc/ppm'
-locale_dir = '/opt/ppm/localization'
+os.makedirs(P.cache_dir, exist_ok=True)
+os.makedirs(P.config_dir, exist_ok=True)
+os.makedirs(P.launcher_dir, exist_ok=True)
+os.makedirs(P.locale_dir, exist_ok=True)
 
-os.makedirs(cache_dir, exist_ok=True)
-os.makedirs(config_dir, exist_ok=True)
-os.makedirs(launcher_dir, exist_ok=True)
-os.makedirs(locale_dir, exist_ok=True)
+sys.path.append(P.launcher_dir) # Add custom path for ppm modules
 
-sys.path.append(launcher_dir) # Add custom path for ppm modules
+# import modules
 import modules
 import modules.auth
 import modules.managing
 import modules.config
 import modules.lock
 
-modules.lock.cache_dir = cache_dir
-modules.managing.cache_dir = cache_dir
-modules.managing.config_dir = config_dir
-modules.config.cache_dir = cache_dir
-modules.config.config_dir = config_dir
+# sync modules config with pconfig
+modules.lock.cache_dir = P.cache_dir
+modules.managing.cache_dir = P.cache_dir
+modules.managing.config_dir = P.config_dir
+modules.config.cache_dir = P.cache_dir
+modules.config.config_dir = P.config_dir
 
-print(f'ppm {version}')
+# print(f'ppm {P.version}')
 
 help_text = """
 Usage: ppm [options] command
@@ -98,35 +95,36 @@ def main():
             if cleaning[1] == 0:
                 print(f"{info} Nothing to clean.") 
             else:
-                print(f"{success} Successfully clean {cleaning[1]} cache files.")
+                print(f"{success} Successfully clean {cleaning[1]} caches.")
         else:
             print(f"{error} Failed to clean cache files.")
 
     elif command == 'refresh':
         print(f"{info} Refreshing...")
         installed = modules.managing.dpkg_refreshInstalled()
-        print(f"{info} The current system has {installed} dpkg packages installed.")
+        print(f"{info} The current system has {installed} dpkg packages.")
 
     elif command == 'help':
         print(help_text)
 
     elif command == 'update':
         repos = modules.config.getRepofromConfiguation()
-        print(f"{info} Found {len(repos)} repositories from configuration...")
         for repo in repos:
             print(f"{info} Updating package list: {repo['name']} ({repo['type']})...", end='')
             sys.stdout.flush()
             if modules.managing.updateMetadata(repo)[0]:
                 print(f"\r{success} Updated package list: {repo['name']} ({repo['type']})...")
             else:
-                print(f"\r{warn} Unable to parse repo \"{repo['name']} ({repo['type']})\", ignoring this item.")
+                print(f"\r{warn} Unable to parse repo \"{repo['name']} ({repo['type']})\"")
 
     elif command == 'reset':
         if modules.lock.disable():
             print(f"{success} Successfully removed the lock file.")
         else:
             print(f"{error} Failed to remove the lock file.")
-        
+
+    elif command == 'version':
+        print(f"{info} ppm {P.version}")
     else:
         print(f"{error} Provided command not found.")
 
