@@ -3,7 +3,6 @@
 from colorama import init, Fore, Style, Back
 import sys
 import os
-import time
 
 init(autoreset=False) # init colorama
 sys.setrecursionlimit(1500) 
@@ -15,7 +14,7 @@ info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
 warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
 error = f"{Fore.RED}{info_character}{Fore.RESET}"
 
-version = "0.1.1"
+version = "0.2"
 launcher_dir = '/opt/ppm'
 cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
@@ -71,7 +70,6 @@ def main():
             print(f'{success} The configuration file has been initialized.')
     
     elif command == 'download':
-        start = time.time()
         repolist = modules.config.getRepofromCache() 
         for repo in repolist:
             modules.managing.loadPackages(repo) # precaching
@@ -80,23 +78,19 @@ def main():
                 for i in packinfo:
                     print(i)
 
-        print(round((time.time() - start) * 1000, 1), 'ms')
-
     elif command == 'search':
-        start = time.time()
         repolist = modules.config.getRepofromCache() 
         for repo in repolist:
             modules.managing.loadPackages(repo) # precaching
             for package_name in args:
                 packinfo = modules.managing.searchPackage(package_name)
                 if packinfo:
-                    print(f"{repo['name']}: {packinfo['Package']}, {packinfo['Version']}")
-        
-        # with os.popen(f"find.go {args[-1]}") as f: print(f.read(), end='')
-
-        print(round((time.time() - start) * 1000, 1), 'ms')
-
-
+                    homepage = ''
+                    if not packinfo.get('Homepage', None) is None:
+                        homepage = f"\n      See more infomation at: {packinfo['Homepage']}"
+                    print(f"{success} {repo['name']}: {packinfo['Package']}, Version {packinfo['Version']}\n   by {packinfo['Maintainer']}\n      {packinfo['Description']}{homepage}")
+                else:
+                    print(f"{error} Package \"{package_name}\" not found")
 
     elif command == 'clean':
         cleaning = modules.config.cleanCacheFolder()
