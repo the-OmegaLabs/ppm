@@ -3,6 +3,7 @@
 from colorama import init, Fore, Style, Back
 import sys
 import os
+import json
 
 init(autoreset=False) # init colorama
 sys.setrecursionlimit(1500) 
@@ -20,11 +21,6 @@ cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
 locale_dir = '/opt/ppm/localization'
 
-os.makedirs(cache_dir, exist_ok=True)
-os.makedirs(config_dir, exist_ok=True)
-os.makedirs(launcher_dir, exist_ok=True)
-os.makedirs(locale_dir, exist_ok=True)
-
 sys.path.append(launcher_dir) # Add custom path for ppm modules
 import modules
 import modules.auth
@@ -38,28 +34,16 @@ modules.managing.config_dir = config_dir
 modules.config.cache_dir = cache_dir
 modules.config.config_dir = config_dir
 
+with open(f'{locale_dir}/zh_CN.json') as f:
+    localization = json.loads(f.read())
+
 print(f'ppm {version}')
 
-help_text = """
-Usage: ppm [options] command
-
-ppm is a command-line package manager currently under testing.
-If you encounter any issues while using ppm, please report them at [https://github.com/Stevesuk0/ppm/issues].
-
-This software is free and follows the GNU General Public License v2.
-
-Common commands:
-init         Initialize configuration files and software sources
-reset        Force remove ppm process lock
-refresh      Synchronize the dpkg database
-update       Update the package list
-search       Search a packages by keyword
-clean        Clean ppm cache files"""
 
 def main():
     if len(sys.argv) < 2:
-        print(f"{error} Not enough arguments provided.")
-        print(help_text)
+        print(f"{error} {localization['no_enough_arguments']}")
+        print(localization['help_text'])
         exit()
     
     command = sys.argv[1]
@@ -67,16 +51,15 @@ def main():
     
     if command == 'init':
         if modules.config.initRepoConfig():
-            print(f'{success} The configuration file has been initialized.')
+            print(f'{success} {localization["configuration_initialized"]}')
     
     elif command == 'download':
         repolist = modules.config.getRepofromCache() 
         for repo in repolist:
             modules.managing.loadPackages(repo) # precaching
             for package_name in args:
-                packinfo = modules.managing.downloadPackage(package_name)
-                for i in packinfo:
-                    print(i)
+                
+                packinfo = modules.managing.downloadPackage(package_name, '.', repo)
 
     elif command == 'search':
         repolist = modules.config.getRepofromCache() 
@@ -87,56 +70,61 @@ def main():
                 if packinfo:
                     homepage = ''
                     if not packinfo.get('Homepage', None) is None:
-                        homepage = f"\n      See more infomation at: {packinfo['Homepage']}"
-                    print(f"{success} {repo['name']}: {packinfo['Package']}, Version {packinfo['Version']}\n   by {packinfo['Maintainer']}\n      {packinfo['Description']}{homepage}")
+                        homepage = f"\n      {launcher_dir['see_website']}: {packinfo['Homepage']}"
+                    print(f"{success} {repo['name']}: {packinfo['Package']}, {localization['version']} {packinfo['Version']}\n   by {packinfo['Maintainer']}\n      {packinfo['Description']}{homepage}")
                 else:
-                    print(f"{error} Package \"{package_name}\" not found")
+                    print(f"{error} {localization['package']} \"{package_name}\" {localization['not_found']}")
 
     elif command == 'clean':
         cleaning = modules.config.cleanCacheFolder()
         if cleaning[0]: # bool
             if cleaning[1] == 0:
-                print(f"{info} Nothing to clean.") 
+                print(f"{info} {localization['nothing_clean']}") 
             else:
-                print(f"{success} Successfully clean {cleaning[1]} cache files.")
+                print(f"{success} {localization['success_clean']} {cleaning[1]} {localization['cache_files']}")
         else:
-            print(f"{error} Failed to clean cache files.")
+            print(f"{error} {localization['failed_clean']}")
 
     elif command == 'refresh':
         print(f"{info} Refreshing...")
         installed = modules.managing.dpkg_refreshInstalled()
-        print(f"{info} The current system has {installed} dpkg packages installed.")
+        print(f"{info} {localization['current_system']} {installed} {localization['installed_dpkg']}")
 
     elif command == 'help':
-        print(help_text)
+        print(localization["help_text"])
 
     elif command == 'update':
         repos = modules.config.getRepofromConfiguation()
-        print(f"{info} Found {len(repos)} repositories from configuration...")
+        print(f"{info} {localization['found']} {len(repos)} {localization['repo_from_config']}...")
         for repo in repos:
-            print(f"{info} Updating package list: {repo['name']} ({repo['type']})...", end='')
+            print(f"{info} {localization['update_package_list']}: {repo['name']} ({repo['type']})...", end='')
             sys.stdout.flush()
             if modules.managing.updateMetadata(repo)[0]:
-                print(f"\r{success} Updated package list: {repo['name']} ({repo['type']})...")
+                print(f"\r{success} {localization['updated_package_list']}: {repo['name']} ({repo['type']})...")
             else:
-                print(f"\r{warn} Unable to parse repo \"{repo['name']} ({repo['type']})\", ignoring this item.")
+                print(f"\r{warn} {localization['cant_process_package_list']} \"{repo['name']} ({repo['type']})\", {localization['ignore_item']}")
 
     elif command == 'reset':
         if modules.lock.disable():
-            print(f"{success} Successfully removed the lock file.")
+            print(f"{success} {localization['success_remove_lock']}")
         else:
-            print(f"{error} Failed to remove the lock file.")
+            print(f"{error} {localization['failed_remove_lock']}")
         
     else:
-        print(f"{error} Provided command not found.")
+        print(f"{error} {localization['provided_command_not_found']}")
 
 if __name__ == "__main__":
     if modules.auth.checkIsRoot() is False:
-        print(f"{warn} Running ppm as normal user.")
+        print(f'{warn} {localization["running_as_normal_user"]}')
         modules.auth.run_as_root(" ".join(sys.argv[1:]))
         exit() 
+
+    os.makedirs(cache_dir, exist_ok=True)
+    os.makedirs(config_dir, exist_ok=True)
+    os.makedirs(launcher_dir, exist_ok=True)
+    os.makedirs(locale_dir, exist_ok=True)
     
     main()
 else:
-    print(f"{error} Directly importing ppm launcher is not recommend for managing system packages, you should be importing the modules of ppm, not the launcher.")
-    print(f"{info} See more infomation at https://wiki.ppm.mom/importing-launcher")
+    print(f"{error} {localization['importing_launcher']}")
+    print(f"{info} {localization['see_website']} https://wiki.ppm.mom/importing-launcher")
