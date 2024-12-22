@@ -4,25 +4,25 @@ from colorama import init, Fore, Style, Back
 import sys
 import os
 import json
-import utils.pconfig as P
+import utils.pconfig as config
 
 init(autoreset=False) # init colorama
 sys.setrecursionlimit(1500)
 
 # Define different message types with colored formatting
-success = P.success
-info = P.info
-warn = P.warn
-error = P.error
+success = config.success
+info = config.info
+warn = config.warn
+error = config.error
 
 def initDir():
-    os.makedirs(P.cache_dir, exist_ok=True)
-    os.makedirs(P.config_dir, exist_ok=True)
-    os.makedirs(P.launcher_dir, exist_ok=True)
-    os.makedirs(P.locale_dir, exist_ok=True)
+    os.makedirs(config.cache_dir, exist_ok=True)
+    os.makedirs(config.config_dir, exist_ok=True)
+    os.makedirs(config.launcher_dir, exist_ok=True)
+    os.makedirs(config.locale_dir, exist_ok=True)
 
-sys.path.append(P.launcher_dir) # Add custom path for ppm modules
-with open(f'{P.locale_dir}/zh_CN.json') as f:
+sys.path.append(config.launcher_dir) # Add custom path for ppm modules
+with open(f'{config.locale_dir}/{config.language}.json') as f:
     localization = json.loads(f.read())
 
 import modules
@@ -32,13 +32,13 @@ import modules.config
 import modules.lock
 
 # sync modules config with pconfig
-modules.lock.cache_dir = P.cache_dir
-modules.managing.cache_dir = P.cache_dir
-modules.managing.config_dir = P.config_dir
-modules.config.cache_dir = P.cache_dir
-modules.config.config_dir = P.config_dir
+modules.lock.cache_dir = config.cache_dir
+modules.managing.cache_dir = config.cache_dir
+modules.managing.config_dir = config.config_dir
+modules.config.cache_dir = config.cache_dir
+modules.config.config_dir = config.config_dir
 
-# print(f'ppm {P.version}')
+print(f'ppm {config.version}')
 
 help_text = """
 Usage: ppm [options] command
@@ -70,12 +70,31 @@ def main():
             print(f'{success} {localization["configuration_initialized"]}')
     
     elif command == 'download':
+        if '--with-depend' in args:
+            withDepend = True
+            args.remove('--with-depend')
+        else:
+            withDepend = False
+
         repolist = modules.config.getRepofromCache() 
         for repo in repolist:
             modules.managing.loadPackages(repo) # precaching
-            for package_name in args:
-
-                packinfo = modules.managing.downloadPackage(package_name, '.', repo)
+            if withDepend:
+                for package_name in args:
+                    packageList = modules.managing.getDependencies(package_name)
+                    print(f"{info} Will download these package: ", end='')
+                    for i in packageList:
+                        print(i, end=' ')
+                    print(f"\n{info} {len(packageList)} packages will be download.")
+                    for i in range(len(packageList)):
+                        print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...           ', end='')
+                        packinfo = modules.managing.downloadPackage({packageList[i]}, '.', repo)
+                        print(f'\r{success} Downloaded package {packageList[i]}.')
+            else:
+                for package_name in args:
+                    print(f'\r{info} Downloading package {package_name}...', end='')
+                    packinfo = modules.managing.downloadPackage(package_name, '.', repo)
+                    print(f'\r{success} Downloaded package {package_name}.      ')
 
     elif command == 'search':
         repolist = modules.config.getRepofromCache() 

@@ -42,7 +42,7 @@ def loadPackages(repo: dict):
     all_packages_cache = packages
 
 def searchPackage(packname: str):
-    return all_packages_cache.get(packname, None)
+    return dict(all_packages_cache.get(packname, None))
 
 def extractPackageNames(depends_str: str):
     package_names = depends_str.split(",")
@@ -86,14 +86,17 @@ def downloadPackage(packname: str, path: str, repo: dict):
     oldPath = os.getcwd()
     os.chdir(path)
 
-    packageInfo = searchPackage(packname)
+    packageInfo = searchPackage(list(packname)[0])
 
     url = f"{repo['url']}/{packageInfo['Filename']}"
     response = requests.get(url)
-    filename = url.split('/'[-1])
+    filename = url.split('/')[-1]
 
     with open(filename, 'wb') as f:
         f.write(response.content)
+        
+
+    os.chdir(oldPath)
     
 
 def updateMetadata(repo: dict):
