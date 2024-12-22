@@ -5,9 +5,7 @@ import requests
 import os
 import base64
 import lzma
-import re
 import io
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 cache_dir = ''
 config_dir = ''
@@ -84,9 +82,19 @@ def getDependencies(packname: str, visited=None):
 
     return list(all_dependencies)
 
-def downloadPackage(packname: str):
-    dependencies = getDependencies(packname)
-    return dependencies
+def downloadPackage(packname: str, path: str, repo: dict):
+    oldPath = os.getcwd()
+    os.chdir(path)
+
+    packageInfo = searchPackage(packname)
+
+    url = f"{repo['url']}/{packageInfo['Filename']}"
+    response = requests.get(url)
+    filename = url.split('/'[-1])
+
+    with open(filename, 'wb') as f:
+        f.write(response.content)
+    
 
 def updateMetadata(repo: dict):
     if repo['type'] == 'dpkg':
@@ -94,7 +102,7 @@ def updateMetadata(repo: dict):
         try:
             response = requests.get(url)
         except Exception as f:
-            return False, f, response
+            return False, f
         
         path = f"{cache_dir}/{base64.b64encode(repo['name'].encode('utf-8')).decode()}"
         
@@ -102,7 +110,7 @@ def updateMetadata(repo: dict):
             with lzma.open(io.BytesIO(response.content)) as compressed:  
                 data = compressed.read().decode('utf-8')
         except Exception as f:
-            return False, f, response
+            return False, f
 
         packages = data.strip().split('\n\n')
         packages_dicts = {}
