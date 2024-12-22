@@ -15,10 +15,11 @@ info = P.info
 warn = P.warn
 error = P.error
 
-os.makedirs(P.cache_dir, exist_ok=True)
-os.makedirs(P.config_dir, exist_ok=True)
-os.makedirs(P.launcher_dir, exist_ok=True)
-os.makedirs(P.locale_dir, exist_ok=True)
+def initDir():
+    os.makedirs(P.cache_dir, exist_ok=True)
+    os.makedirs(P.config_dir, exist_ok=True)
+    os.makedirs(P.launcher_dir, exist_ok=True)
+    os.makedirs(P.locale_dir, exist_ok=True)
 
 sys.path.append(P.launcher_dir) # Add custom path for ppm modules
 with open(f'{P.locale_dir}/zh_CN.json') as f:
@@ -133,7 +134,7 @@ if __name__ == "__main__":
         print(f'{warn} {localization["running_as_normal_user"]}')
         modules.auth.run_as_root(" ".join(sys.argv[1:]))
         exit() 
-    
+    initDir()
     main()
 else:
     print(f"{error} {localization['importing_launcher']}")
