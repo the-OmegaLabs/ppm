@@ -21,6 +21,9 @@ cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
 locale_dir = '/opt/ppm/localization'
 
+with open(f'{locale_dir}/zh_CN.json') as f:
+    localization = json.loads(f.read())
+
 sys.path.append(launcher_dir) # Add custom path for ppm modules
 import modules
 import modules.auth
@@ -33,9 +36,6 @@ modules.managing.cache_dir = cache_dir
 modules.managing.config_dir = config_dir
 modules.config.cache_dir = cache_dir
 modules.config.config_dir = config_dir
-
-with open(f'{locale_dir}/zh_CN.json') as f:
-    localization = json.loads(f.read())
 
 print(f'ppm {version}')
 
@@ -70,7 +70,7 @@ def main():
                 if packinfo:
                     homepage = ''
                     if not packinfo.get('Homepage', None) is None:
-                        homepage = f"\n      {launcher_dir['see_website']}: {packinfo['Homepage']}"
+                        homepage = f"\n      {localization['see_website']}: {packinfo['Homepage']}"
                     print(f"{success} {repo['name']}: {packinfo['Package']}, {localization['version']} {packinfo['Version']}\n   by {packinfo['Maintainer']}\n      {packinfo['Description']}{homepage}")
                 else:
                     print(f"{error} {localization['package']} \"{package_name}\" {localization['not_found']}")
@@ -86,7 +86,7 @@ def main():
             print(f"{error} {localization['failed_clean']}")
 
     elif command == 'refresh':
-        print(f"{info} Refreshing...")
+        print(f"{info} {localization['refreshing']}...")
         installed = modules.managing.dpkg_refreshInstalled()
         print(f"{info} {localization['current_system']} {installed} {localization['installed_dpkg']}")
 

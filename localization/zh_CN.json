@@ -19,6 +19,8 @@
     "updated_package_list": "已更新软件包列表",
     "cant_process_package_list": "无法处理仓库",
     "ignore_item": "忽略此项",
+    "version": "版本",
+    "refreshing": "刷新中",
     "success_remove_lock": "成功移除锁文件",
     "failed_remove_lock": "移除锁文件失败",
     "provided_command_not_found": "提供的命令未找到"

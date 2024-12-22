@@ -19,6 +19,8 @@
     "updated_package_list": "Updated package list",
     "cant_process_package_list": "Unable to process repo",
     "ignore_item": "ignoring this item",
+    "version": "Version",
+    "refreshing": "Refreshing",
     "success_remove_lock": "Successfully removed the lock file",
     "failed_remove_lock": "Failed to remove the lock file",
     "provided_command_not_found": "Provided command not found"
