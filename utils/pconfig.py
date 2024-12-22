@@ -6,10 +6,10 @@ import colorama as CA
 
 """ Basic Config """
 version = "0.2"
-launcher_dir = '/opt/ppm'
+launcher_dir = '/opt/ppm/ppm-master'
 cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
-locale_dir = '/opt/ppm/localization'
+locale_dir = '/opt/ppm/ppm-master/localization'
 
 """ Personalize Config """
 language = 'en_us'
