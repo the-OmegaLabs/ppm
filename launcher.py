@@ -43,7 +43,8 @@ modules.managing.config_dir = config.config_dir
 modules.config.cache_dir = config.cache_dir
 modules.config.config_dir = config.config_dir
 
-print(f'ppm {config.version}')
+if(config.print_version):
+    print(f'ppm {config.version}')
 
 help_text = """
 Usage: ppm [options] command
