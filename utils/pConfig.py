@@ -14,7 +14,7 @@ locale_dir = f'{launcher_dir}/localization'
 
 """ Personalize Config """
 language = 'en_US'
-info_character = '##' # I think <> is better LOL
+info_character = '<>' # I think <> is better LOL
 enable_color = modules.verify.is_color_supported()
 success = f"{pColor.GREEN}{info_character}{pColor.RESET}"
 info = f"{pColor.BLUE}{info_character}{pColor.RESET}"
