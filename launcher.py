@@ -1,19 +1,24 @@
 #!/usr/bin/python3
 
-from colorama import init, Fore, Style, Back
+from utils.pColor import pColor
 import sys
 import os
 import json
-import utils.pconfig as config
+import utils.pConfig as config
 
-init(autoreset=False) # init colorama
 sys.setrecursionlimit(1500)
 
 # Define different message types with colored formatting
-success = config.success
-info = config.info
-warn = config.warn
-error = config.error
+if config.enable_color:
+    success = config.success
+    info = config.info
+    warn = config.warn
+    error = config.error
+else:
+    success = config.success2
+    info = config.info2
+    warn = config.warn2
+    error = config.error2
 
 def initDir():
     os.makedirs(config.cache_dir, exist_ok=True)
@@ -70,11 +75,11 @@ def main():
             print(f'{success} {localization["configuration_initialized"]}')
     
     elif command == 'download':
-        if '--with-depend' in args:
-            withDepend = True
-            args.remove('--with-depend')
-        else:
+        if '--without-depend' in args:
             withDepend = False
+        else:
+            withDepend = True
+            args.remove('--without-depend')
 
         repolist = modules.config.getRepofromCache() 
         for repo in repolist:

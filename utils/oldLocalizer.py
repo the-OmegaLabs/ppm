@@ -4,7 +4,7 @@
     I'll add crowdin support in the future btw
 
 """
-import pconfig
+import pConfig
 import stringUtils
 import re
 
