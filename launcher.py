@@ -43,7 +43,7 @@ modules.managing.config_dir = config.config_dir
 modules.config.cache_dir = config.cache_dir
 modules.config.config_dir = config.config_dir
 
-if(config.print_version):
+if config.print_version:
     print(f'ppm {config.version}')
 
 help_text = """
@@ -60,7 +60,8 @@ reset        Force remove ppm process lock
 refresh      Synchronize the dpkg database
 update       Update the package list
 search       Search a packages by keyword
-clean        Clean ppm cache files"""
+clean        Clean ppm cache files
+download     Download package by keyword (beta)"""
 
 def main():
     if len(sys.argv) < 2:

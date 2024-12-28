@@ -1,12 +1,13 @@
 from utils.pColor import pColor
 import modules.verify
+
 """
     PPM Configuration File
     Modify this file as your please XD
 """
 
 """ Basic Config """
-version = "0.2"
+version = "0.3"
 launcher_dir = '/opt/ppm'
 cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'
@@ -14,7 +15,7 @@ locale_dir = f'{launcher_dir}/localization'
 
 """ Personalize Config """
 language = 'en_US'
-info_character = '<>' # I think <> is better LOL
+info_character = '<>'
 print_version = False
 enable_color = modules.verify.is_color_supported()
 success = f"{pColor.GREEN}{info_character}{pColor.RESET}"
