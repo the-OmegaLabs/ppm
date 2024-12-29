@@ -98,6 +98,7 @@ def main():
                     return 1
         
         print(f"{info} Delect {len(packageList)} dpkg packages, calling dpkg...")
+        modules.lock.enable()
         modules.managing.installThemAll(f'{config.cache_dir}/temp')
         print(f"{success} Installed {len(packageList)} packages.")
         print(f"{info} Cleaning up temporary files...")
@@ -109,6 +110,7 @@ def main():
         print(f"{info} {localization['refreshing']}...")
         installed = modules.managing.dpkg_refreshInstalled()
         print(f"{info} {localization['current_system']} {installed} {localization['installed_dpkg']}")
+        modules.lock.disable()
         return 0
 
                     
