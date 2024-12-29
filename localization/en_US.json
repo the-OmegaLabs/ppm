@@ -6,6 +6,7 @@
     "see_website": "See more infomation at",
     "importing_launcher": "Directly importing ppm launcher is not recommend for managing system packages, you should be importing the modules of ppm, not the launcher.",
     "package": "Package",
+    "packages": "Packages",
     "not_found": "not found",
     "nothing_clean": "Nothing to clean.",
     "success_clean": "Successfully clean",
@@ -23,5 +24,10 @@
     "refreshing": "Refreshing",
     "success_remove_lock": "Successfully removed the lock file",
     "failed_remove_lock": "Failed to remove the lock file",
-    "provided_command_not_found": "Provided command not found"
+    "provided_command_not_found": "Provided command not found",
+    "select": "Select",
+    "call_dpkg": "calling dpkg...",
+    "proceed": "Proceed",
+    "will_install": "Will install these packages: ",
+    "pkg_will_be_installed": "packages will be installed"
 }

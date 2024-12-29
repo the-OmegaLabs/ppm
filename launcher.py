@@ -82,11 +82,11 @@ def main():
             for package_name in args:
                 packageList = modules.managing.getDependencies(package_name)
                 packageList.append(package_name)
-                print(f"{info} Will install these package: ", end='')
+                print(f"{info} {localization['will_install']}", end='')
                 for i in packageList:
                     print(i, end=' ')
                 print()
-                choice = input(f"{info} Proceed? (Y/n) ")
+                choice = input(f"{info} {localization['proceed']}? (Y/n) ")
                 if choice == 'y' or not choice:
                     print(f"\n{info} {len(packageList)} packages will be installed.")
                     for i in range(len(packageList)):
@@ -97,8 +97,12 @@ def main():
                 else:
                     return 1
         
+<<<<<<< Updated upstream
         print(f"{info} Delect {len(packageList)} dpkg packages, calling dpkg...")
         modules.lock.enable()
+=======
+        print(f"{info} {localization['select']} {len(packageList)} dpkg {localization['packages']}, {localization['call_dpkg']}")
+>>>>>>> Stashed changes
         modules.managing.installThemAll(f'{config.cache_dir}/temp')
         print(f"{success} Installed {len(packageList)} packages.")
         print(f"{info} Cleaning up temporary files...")
