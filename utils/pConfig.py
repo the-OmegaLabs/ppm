@@ -23,10 +23,10 @@ print_version = False
 info_character = '<>'
 enable_color_output = modules.verify.is_color_supported()
 
-success = f"{Fore.GREEN}{info_character}{Fore.RESET}"
-info = f"{Fore.BLUE}{info_character}{Fore.RESET}"
-warn = f"{Fore.YELLOW}{info_character}{Fore.RESET}"
-error = f"{Fore.RED}{info_character}{Fore.RESET}"
+success = f"{pColor.GREEN}{info_character}{pColor.RESET}"
+info = f"{pColor.BLUE}{info_character}{pColor.RESET}"
+warn = f"{pColor.YELLOW}{info_character}{pColor.RESET}"
+error = f"{pColor.RED}{info_character}{pColor.RESET}"
 
 success_alt = f"DONE:"
 info_alt = f"INFO:"
