@@ -42,7 +42,7 @@ def loadPackages(repo: dict):
     all_packages_cache = packages
 
 def searchPackage(packname: str):
-    return dict(all_packages_cache.get(packname, None))
+    return dict(all_packages_cache).get(packname, None)
 
 def extractPackageNames(depends_str: str):
     package_names = depends_str.split(",")
@@ -83,10 +83,14 @@ def getDependencies(packname: str, visited=None):
     return list(all_dependencies)
 
 def downloadPackage(packname: str, path: str, repo: dict):
+    os.makedirs(path, exist_ok=True)
     oldPath = os.getcwd()
     os.chdir(path)
 
-    packageInfo = searchPackage(list(packname)[0])
+    if isinstance(packname, set):
+        packname = list(packname)[0]
+
+    packageInfo = searchPackage(packname)
 
     url = f"{repo['url']}/{packageInfo['Filename']}"
     response = requests.get(url)
@@ -94,10 +98,20 @@ def downloadPackage(packname: str, path: str, repo: dict):
 
     with open(filename, 'wb') as f:
         f.write(response.content)
-        
 
     os.chdir(oldPath)
-    
+
+    return filename
+
+def installPackage(packname: str):
+    os.system(f"dpkg -i {packname}")
+
+def installThemAll(path):
+    oldPath = os.getcwd()
+    os.chdir(path)
+    os.system(f"dpkg -i *.deb")
+    os.chdir(oldPath)
+
 
 def updateMetadata(repo: dict):
     if repo['type'] == 'dpkg':

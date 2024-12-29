@@ -6,14 +6,25 @@ import os
 import base64
 
 def cleanCacheFolder():
-    try:
-        os.chdir(cache_dir)
-        filelist = os.listdir()
-        for i in filelist:
+    os.chdir(cache_dir)
+    filelist = os.listdir()
+    count = 0
+    for i in filelist:
+        try:
             os.remove(i)
-        return (True, len(filelist))
-    except:
-        return (False, 0)
+            count += 1
+        except:
+            pass
+    os.chdir('temp')
+    filelist = os.listdir()
+    for i in filelist:
+        try:
+            os.remove(i)
+            count += 1
+        except:
+            pass
+    return (True, len(filelist))
+    
 
 def getRepofromConfiguation(): 
     with open(f"{config_dir}/repo.json") as f:
