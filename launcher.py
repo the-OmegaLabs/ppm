@@ -80,6 +80,7 @@ def main():
             modules.managing.loadPackages(repo) # precaching
             for package_name in args:
                 packageList = modules.managing.getDependencies(package_name)
+                packageList.append(package_name)
                 print(f"{info} Will install these package: ", end='')
                 for i in packageList:
                     print(i, end=' ')
@@ -124,6 +125,7 @@ def main():
             if withDepend:
                 for package_name in args:
                     packageList = modules.managing.getDependencies(package_name)
+                    packageList.append(package_name)
                     print(f"{info} Will download these package: ", end='')
                     for i in packageList:
                         print(i, end=' ')
