@@ -1,8 +1,8 @@
 from utils.pColor import pColor
-import modules.verify
+import core as C
 
 """
-    ppm personilized configuration file
+    ppm personalized configuration file
     This file is used to store all the configurations for the ppm launcher.
     Such as the version, directories, output style, and the language, etc. 
     Modify this file if you want!
@@ -21,7 +21,7 @@ print_version = False
 
 # Output Style:
 info_character = '<>'
-enable_color_output = modules.verify.is_color_supported()
+enable_color_output = C.isColorSupported()
 
 success = f"{pColor.GREEN}{info_character}{pColor.RESET}"
 info = f"{pColor.BLUE}{info_character}{pColor.RESET}"

@@ -1,61 +1,85 @@
-# Package managing module 
-
-import json
-import requests
+import sys
 import os
+import subprocess
 import base64
 import lzma
 import io
+import json
+import requests
 
 cache_dir = ''
 config_dir = ''
 dependency_cache = {}
 all_packages_cache = {}
 
-def dpkg_getInstalled(): # return package with version
-    with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f: # retrieving dpkg information using dpkg-query
+def lockDisable():
+    try:
+        os.remove(cache_dir + '/ppm.lck')
+        return True
+    except:
+        return False
+def lockEnable():
+    with open(cache_dir + '/ppm.lck', 'w') as f:
+        f.write('')
+def lockCheck():
+    return os.path.exists(cache_dir + '/ppm.lck')
+def isColorSupported():
+    if not sys.stdout.isatty():
+        return False
+    term = os.getenv('TERM', '').lower()
+    colorterm = os.getenv('COLORTERM', '').lower()
+
+    if "color" in term or "256color" in term or "truecolor" in colorterm:
+        return True
+    try:
+        colors = int(subprocess.check_output(['tput', 'colors']))
+        if colors > 0:
+            return True
+    except subprocess.CalledProcessError:
+        pass
+    return False
+def runAsRoot(args):
+    os.system(f"sudo sh -c 'cd {os.getcwd()}; /bin/python3 launcher.py {args}'")
+def checkIsRoot(): # return true when user is root
+    return os.getuid() == 0
+def dpkg_getInstalled():  # return package with version
+    with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f:  # retrieving dpkg information using dpkg-query
         a = f.read().strip().split(',')
         installed = {}
-        
+
         for i in a:
             parts = i.split('/')
-            if len(parts) == 2 and parts[1]: 
+            if len(parts) == 2 and parts[1]:
                 installed[parts[0]] = parts[1]
-        
+
         return installed
-    
-def dpkg_refreshInstalled(): # It will return how many dpkg package you installed.
+def dpkg_refreshInstalled():  # It will return how many dpkg package you installed.
     installed = dpkg_getInstalled()
     with open(cache_dir + '/installed_dpkg.json', 'w') as f:
         f.write(json.dumps(installed, ensure_ascii=False, indent=4))
     return len(installed)
-
-
 def loadPackages(repo: dict):
     global all_packages_cache
     all_packages_cache = {}
     repo_filepath = f"{cache_dir}/{base64.b64encode(repo['name'].encode()).decode()}.ppmlist"
-    
+
     with open(repo_filepath) as f:
         packages = json.loads(f.read())
-    
-    all_packages_cache = packages
 
+    all_packages_cache = packages
 def searchPackage(packname: str):
     return dict(all_packages_cache).get(packname, None)
-
 def extractPackageNames(depends_str: str):
     package_names = depends_str.split(",")
-    
-    cleaned_package_names = set()  
+
+    cleaned_package_names = set()
     for package in package_names:
         parts = package.strip().split()
-        
-        if parts:
-            cleaned_package_names.add(parts[0])  
-    
-    return cleaned_package_names
 
+        if parts:
+            cleaned_package_names.add(parts[0])
+
+    return cleaned_package_names
 def getDependencies(packname: str, visited=None):
     if visited is None:
         visited = set()
@@ -81,7 +105,6 @@ def getDependencies(packname: str, visited=None):
         all_dependencies.update(getDependencies(dep, visited))
 
     return list(all_dependencies)
-
 def downloadPackage(packname: str, path: str, repo: dict):
     os.makedirs(path, exist_ok=True)
     oldPath = os.getcwd()
@@ -102,17 +125,13 @@ def downloadPackage(packname: str, path: str, repo: dict):
     os.chdir(oldPath)
 
     return filename
-
 def installPackage(packname: str):
     os.system(f"dpkg -i {packname}")
-
 def installThemAll(path):
     oldPath = os.getcwd()
     os.chdir(path)
     os.system(f"dpkg -i *.deb")
     os.chdir(oldPath)
-
-
 def updateMetadata(repo: dict):
     if repo['type'] == 'dpkg':
         url = f"{repo['url']}/dists/{repo['codename']}/{repo['category']}/Packages.xz"
@@ -120,11 +139,11 @@ def updateMetadata(repo: dict):
             response = requests.get(url)
         except Exception as f:
             return False, f
-        
+
         path = f"{cache_dir}/{base64.b64encode(repo['name'].encode('utf-8')).decode()}"
-        
+
         try:
-            with lzma.open(io.BytesIO(response.content)) as compressed:  
+            with lzma.open(io.BytesIO(response.content)) as compressed:
                 data = compressed.read().decode('utf-8')
         except Exception as f:
             return False, f
@@ -138,7 +157,7 @@ def updateMetadata(repo: dict):
                 if ': ' in line:
                     key, value = line.split(': ', 1)
                     package_dict[key] = value.strip()
-            
+
             package_name = package_dict.get("Package", "unknown_package")
             packages_dicts[package_name] = package_dict
 
@@ -147,3 +166,50 @@ def updateMetadata(repo: dict):
         return True, None, response
     else:
         return False, None, None
+def cleanCacheFolder():
+    os.chdir(cache_dir)
+    filelist = os.listdir()
+    count = 0
+    for i in filelist:
+        try:
+            os.remove(i)
+            count += 1
+        except:
+            pass
+    os.chdir('temp')
+    filelist = os.listdir()
+    for i in filelist:
+        try:
+            os.remove(i)
+            count += 1
+        except:
+            pass
+    return (True, len(filelist))
+def getRepofromConfiguation():
+    with open(f"{config_dir}/repo.json") as f:
+        return json.loads(f.read())
+def getRepofromCache():
+    config_repolist = getRepofromConfiguation()
+
+    cachelist = {
+        base64.b64decode(i.split('.ppmlist')[0]).decode()
+        for i in os.listdir(cache_dir) if '.ppmlist' in i
+    }
+    repolist = [repo for repo in config_repolist if repo['name'] in cachelist]
+
+    return repolist
+def initRepoConfig():
+    example_repo = [
+        {
+            'name': 'System Base',
+            'type': 'dpkg',
+            'url': 'http://mirrors.sdu.edu.cn/debian',
+            'codename': 'bookworm',
+            'category': 'main/binary-amd64',
+        },
+    ]
+
+    with open(config_dir + '/repo.json', 'w') as f:
+        f.write(json.dumps(example_repo, indent=4, ensure_ascii=False))
+
+    return True
