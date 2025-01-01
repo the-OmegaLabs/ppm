@@ -9,8 +9,8 @@ import stringUtils
 import re
 
 def setLanguage(lang):
-    if pconfig.language!=0:
-        pconfig.language = lang
+    if pConfig.language!=0:
+        pConfig.language = lang;
         return 1
     else:
         return 0
@@ -23,12 +23,12 @@ def readLang(language,isList):
             return f.readlines()
 
 def translate(a):
-    for i in readLang(pconfig.language,True):
+    for i in readLang(pConfig.language,True):
         if re.search(a,i):
             return i.split('$')[1]
 
 def testing():
-    exampleString = readLang(pconfig.language,True)[0]
+    exampleString = readLang(pConfig.language,True)[0]
     stringUtils.printMultiLines(exampleString)
 
 if __name__=="__main__":
