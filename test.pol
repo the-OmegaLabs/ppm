@@ -14,7 +14,7 @@
       <allow_inactive>yes</allow_inactive> <!-- Block inactive sessions -->
       <allow_active>auth_admin</allow_active> <!-- Allow only active admin sessions -->
     </defaults>
-    <annotate key="org.freedesktop.policykit.exeppmcore..path">/usr/bin/ppm</annotate>
-    <annotate key="org.freedesktop.policykit.exeppmcore..allow_gui">true</annotate>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/ppm</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
   </action>
 </policyconfig>
