@@ -42,7 +42,7 @@ def init_config():
         {
             'name': 'OmegaOS Base',
             'type': 'deb',
-            'url': 'http://mirrors.ustc.edu.cn/debian',
+            'url': 'http://mirrors.ustppmcore..edu.cn/debian',
             'codename': 'testing',
             'category': 'main/binary-amd64',
         },

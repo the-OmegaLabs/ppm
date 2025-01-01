@@ -1,10 +1,10 @@
 from utils.pColor import pColor
-import core as C
+import ppmcore
 
 """
     ppm personalized configuration file
     This file is used to store all the configurations for the ppm launcher.
-    Such as the version, directories, output style, and the language, etc. 
+    Such as the version, directories, output style, and the language, etppmCore. 
     Modify this file if you want!
 """
 
@@ -21,7 +21,7 @@ print_version = False
 
 # Output Style:
 info_character = '<>'
-enable_color_output = C.isColorSupported()
+enable_color_output = ppmcore.isColorSupported()
 
 success = f"{pColor.GREEN}{info_character}{pColor.RESET}"
 info = f"{pColor.BLUE}{info_character}{pColor.RESET}"
@@ -35,7 +35,6 @@ error_alt = f"FAIL:"
 
 # Don't change these unless you know what you are doing!
 """ Basic Config """
-version = "0.3"
 launcher_dir = '/opt/ppm'
 cache_dir = '/var/cache/ppm'
 config_dir = '/etc/ppm'

@@ -7,22 +7,16 @@ import io
 import json
 import requests
 
+##############################################
+# Directory settings:
+# Running another function before set these variable.
 cache_dir = ''
 config_dir = ''
 dependency_cache = {}
 all_packages_cache = {}
 
-def lockDisable():
-    try:
-        os.remove(cache_dir + '/ppm.lck')
-        return True
-    except:
-        return False
-def lockEnable():
-    with open(cache_dir + '/ppm.lck', 'w') as f:
-        f.write('')
-def lockCheck():
-    return os.path.exists(cache_dir + '/ppm.lck')
+##############################################
+# Misc functions:
 def isColorSupported():
     if not sys.stdout.isatty():
         return False
@@ -38,12 +32,67 @@ def isColorSupported():
     except subprocess.CalledProcessError:
         pass
     return False
+
 def runAsRoot(args):
     os.system(f"sudo sh -c 'cd {os.getcwd()}; /bin/python3 launcher.py {args}'")
-def checkIsRoot(): # return true when user is root
+
+def checkIsRoot():  # return true when user is root
     return os.getuid() == 0
+
+def hello():
+    print('Hello, World!')
+
+##############################################
+# lock functions:
+def lockDisable():
+    try:
+        os.remove(cache_dir + '/ppm.lck')
+        return True
+    except:
+        return False
+
+
+def lockEnable():
+    with open(cache_dir + '/ppm.lck', 'w') as f:
+        f.write('')
+
+
+def lockCheck():
+    return os.path.exists(cache_dir + '/ppm.lck')
+
+##############################################
+# Cleaning functions:
+def cleanTempFolder():
+    os.chdir(f'{cache_dir}/temp')
+    filelist = os.listdir()
+    for i in filelist:
+        try:
+            os.remove(i)
+            count += 1
+        except:
+            pass
+    return len(filelist)
+
+def cleanCacheFolder():
+    os.chdir(cache_dir)
+    filelist = os.listdir()
+    count = 0
+    for i in filelist:
+        try:
+            os.remove(i)
+            count += 1
+        except:
+            pass
+
+    count += cleanTempFolder()
+    
+    return (True, count)
+
+##############################################
+# dpkg management functions:
 def dpkg_getInstalled():  # return package with version
-    with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f:  # retrieving dpkg information using dpkg-query
+    # retrieving dpkg information using dpkg-query
+    with os.popen("dpkg-query -W -f='${Package}/${Version},'") as f:
         a = f.read().strip().split(',')
         installed = {}
 
@@ -53,12 +102,16 @@ def dpkg_getInstalled():  # return package with version
                 installed[parts[0]] = parts[1]
 
         return installed
+
+
 def dpkg_refreshInstalled():  # It will return how many dpkg package you installed.
     installed = dpkg_getInstalled()
     with open(cache_dir + '/installed_dpkg.json', 'w') as f:
         f.write(json.dumps(installed, ensure_ascii=False, indent=4))
     return len(installed)
-def loadPackages(repo: dict):
+
+
+def dpkg_loadPackages(repo: dict):
     global all_packages_cache
     all_packages_cache = {}
     repo_filepath = f"{cache_dir}/{base64.b64encode(repo['name'].encode()).decode()}.ppmlist"
@@ -67,9 +120,13 @@ def loadPackages(repo: dict):
         packages = json.loads(f.read())
 
     all_packages_cache = packages
-def searchPackage(packname: str):
+
+
+def dpkg_searchPackage(packname: str):
     return dict(all_packages_cache).get(packname, None)
-def extractPackageNames(depends_str: str):
+
+
+def dpkg_extractPackageNames(depends_str: str):
     package_names = depends_str.split(",")
 
     cleaned_package_names = set()
@@ -80,7 +137,9 @@ def extractPackageNames(depends_str: str):
             cleaned_package_names.add(parts[0])
 
     return cleaned_package_names
-def getDependencies(packname: str, visited=None):
+
+
+def dpkg_getDependencies(packname: str, visited=None):
     if visited is None:
         visited = set()
 
@@ -89,7 +148,7 @@ def getDependencies(packname: str, visited=None):
 
     visited.add(packname)
 
-    package_info = searchPackage(packname)
+    package_info = dpkg_searchPackage(packname)
     if not package_info:
         return set()
 
@@ -97,15 +156,17 @@ def getDependencies(packname: str, visited=None):
     if not depends_str:
         return set()
 
-    dependencies = extractPackageNames(depends_str)
+    dependencies = dpkg_extractPackageNames(depends_str)
 
     all_dependencies = set(dependencies)
 
     for dep in dependencies:
-        all_dependencies.update(getDependencies(dep, visited))
+        all_dependencies.update(dpkg_getDependencies(dep, visited))
 
     return list(all_dependencies)
-def downloadPackage(packname: str, path: str, repo: dict):
+
+
+def dpkg_downloadPackage(packname: str, path: str, repo: dict):
     os.makedirs(path, exist_ok=True)
     oldPath = os.getcwd()
     os.chdir(path)
@@ -113,7 +174,7 @@ def downloadPackage(packname: str, path: str, repo: dict):
     if isinstance(packname, set):
         packname = list(packname)[0]
 
-    packageInfo = searchPackage(packname)
+    packageInfo = dpkg_searchPackage(packname)
 
     url = f"{repo['url']}/{packageInfo['Filename']}"
     response = requests.get(url)
@@ -125,14 +186,20 @@ def downloadPackage(packname: str, path: str, repo: dict):
     os.chdir(oldPath)
 
     return filename
-def installPackage(packname: str):
+
+
+def dpkg_installPackage(packname: str):
     os.system(f"dpkg -i {packname}")
-def installThemAll(path):
+
+
+def dpkg_installPackagesfromDir(path):
     oldPath = os.getcwd()
     os.chdir(path)
     os.system(f"dpkg -i *.deb")
     os.chdir(oldPath)
-def updateMetadata(repo: dict):
+
+
+def dpkg_updateMetadata(repo: dict):
     if repo['type'] == 'dpkg':
         url = f"{repo['url']}/dists/{repo['codename']}/{repo['category']}/Packages.xz"
         try:
@@ -166,28 +233,13 @@ def updateMetadata(repo: dict):
         return True, None, response
     else:
         return False, None, None
-def cleanCacheFolder():
-    os.chdir(cache_dir)
-    filelist = os.listdir()
-    count = 0
-    for i in filelist:
-        try:
-            os.remove(i)
-            count += 1
-        except:
-            pass
-    os.chdir('temp')
-    filelist = os.listdir()
-    for i in filelist:
-        try:
-            os.remove(i)
-            count += 1
-        except:
-            pass
-    return (True, len(filelist))
+##############################################
+# configuration functions:
 def getRepofromConfiguation():
     with open(f"{config_dir}/repo.json") as f:
         return json.loads(f.read())
+
+
 def getRepofromCache():
     config_repolist = getRepofromConfiguation()
 
@@ -198,6 +250,8 @@ def getRepofromCache():
     repolist = [repo for repo in config_repolist if repo['name'] in cachelist]
 
     return repolist
+
+
 def initRepoConfig():
     example_repo = [
         {
@@ -213,3 +267,5 @@ def initRepoConfig():
         f.write(json.dumps(example_repo, indent=4, ensure_ascii=False))
 
     return True
+
+##############################################
