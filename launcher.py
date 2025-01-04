@@ -77,13 +77,26 @@ def main():
                 packageList = ppmcore.dpkg_getDependencies(package_name)
                 packageList = list(packageList)
                 packageList.append(package_name)
-                print(f"{info} {localization['will_install']}", end='')
+                max_package_width = 15
+                print(f"{info} {localization['will_install']}")
+                downloadSizeCount = 0
+                installedSizeCount = 0
                 for i in packageList:
-                    print(i, end=' ')
-                print()
+                    try:
+                        pack_info = ppmcore.dpkg_searchPackage(i)
+                        package_name = pack_info['Package']
+                        if len(package_name) > 12:
+                            package_name = package_name[:12] + '...'
+                        downloadSizeCount += int(pack_info['Size'])
+                        installedSizeCount += int(pack_info['Installed-Size'])
+                        print(f"{package_name.ljust(max_package_width)} {pack_info['Description']}")
+                    except Exception as e:
+                        print(f"{error} Can't find package {i}: {e}")
+                print(f"{info} Download these package will use {round(downloadSizeCount / 1024 / 1024, 1)} MB data.")
+                print(f"{info} After this operation, {round(installedSizeCount / 1024, 1)} MB of additional disk space will be used.")
+                print(f"{info} {len(packageList)} packages will be installed.")
                 choice = input(f"{info} {localization['proceed']}? (Y/n) ")
                 if choice == 'y' or not choice:
-                    print(f"\n{info} {len(packageList)} packages will be installed.")
                     for i in range(len(packageList)):
                         print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...', end='')
                         filename = ppmcore.dpkg_downloadPackage({packageList[i]}, f'{config.cache_dir}/temp', repo)
