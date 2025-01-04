@@ -98,3 +98,6 @@ class pColor:
         else:
             raise ValueError(f"Color '{color}' is not a valid color.")
 
+    def printInfo(self):
+        """Print version about pcolor"""
+        print(f"pColor b5 by @bzym2")
