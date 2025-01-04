@@ -75,6 +75,7 @@ def main():
             ppmcore.dpkg_loadPackages(repo) # precaching
             for package_name in args:
                 packageList = ppmcore.dpkg_getDependencies(package_name)
+                packageList = list(packageList)
                 packageList.append(package_name)
                 print(f"{info} {localization['will_install']}", end='')
                 for i in packageList:
@@ -84,10 +85,10 @@ def main():
                 if choice == 'y' or not choice:
                     print(f"\n{info} {len(packageList)} packages will be installed.")
                     for i in range(len(packageList)):
-                        print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...           ', end='')
+                        print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...', end='')
                         filename = ppmcore.dpkg_downloadPackage({packageList[i]}, f'{config.cache_dir}/temp', repo)
                         willInstall.append(filename)
-                        print(f'\r{success} Downloaded package {packageList[i]}.')
+                        print(f'\r{success} Downloaded package {packageList[i]}.           ')
                 else:
                     return 1
         ppmcore.lockEnable()
@@ -124,9 +125,9 @@ def main():
                         print(i, end=' ')
                     print(f"\n{info} {len(packageList)} packages will be download.")
                     for i in range(len(packageList)):
-                        print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...           ', end='')
+                        print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...', end='')
                         packinfo = ppmcore.dpkg_downloadPackage({packageList[i]}, '.', repo)
-                        print(f'\r{success} Downloaded package {packageList[i]}.')
+                        print(f'\r{success} Downloaded package {packageList[i]}.           ')
             else:
                 for package_name in args:
                     print(f'\r{info} Downloading package {package_name}...', end='')
