@@ -82,19 +82,25 @@ def main():
                 downloadSizeCount = 0
                 installedSizeCount = 0
                 for i in packageList:
-                    try:
-                        pack_info = ppmcore.dpkg_searchPackage(i)
-                        package_name = pack_info['Package']
-                        if len(package_name) > 12:
-                            package_name = package_name[:12] + '...'
-                        downloadSizeCount += int(pack_info['Size'])
-                        installedSizeCount += int(pack_info['Installed-Size'])
-                        print(f"{package_name.ljust(max_package_width)} {pack_info['Description']}")
+                    try: # Suggests
+                        packInfo = ppmcore.dpkg_searchPackage(i)
+                        if not packInfo.get('Suggests', None) is None:
+                            suggests = packInfo['Suggests'].split(',')
+                            suggestsPackages = [pkg.split()[0] for pkg in suggests]
+                            print(f'  Package {i} suggests optional dependencies:')
+                            for j in suggestsPackages:
+                                suggestsPackageInfo = ppmcore.dpkg_searchPackage(j)
+                                print(f'      {j}')
+                        packageName = packInfo['Package']
+                        if len(packageName) > 12:
+                            packageName = packageName[:12] + '...'
+                        downloadSizeCount += int(packInfo['Size'])
+                        installedSizeCount += int(packInfo['Installed-Size'])
+                        print(f"{packageName.ljust(max_package_width)} {packInfo['Description']}")
                     except Exception as e:
                         print(f"{error} Can't find package {i}: {e}")
-                print(f"{info} Download these package will use {round(downloadSizeCount / 1024 / 1024, 1)} MB data.")
+                print(f"{info} Will download {len(packageList)} packages, using {round(downloadSizeCount / 1024 / 1024, 1)} MB data.")
                 print(f"{info} After this operation, {round(installedSizeCount / 1024, 1)} MB of additional disk space will be used.")
-                print(f"{info} {len(packageList)} packages will be installed.")
                 choice = input(f"{info} {localization['proceed']}? (Y/n) ")
                 if choice == 'y' or not choice:
                     for i in range(len(packageList)):
