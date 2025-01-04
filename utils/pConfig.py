@@ -4,7 +4,7 @@ import ppmcore
 """
     ppm personalized configuration file
     This file is used to store all the configurations for the ppm launcher.
-    Such as the version, directories, output style, and the language, etppmCore. 
+    Such as the version, directories, output style, and the language, etc. 
     Modify this file if you want!
 """
 
