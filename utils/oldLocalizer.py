@@ -10,7 +10,7 @@ import re
 
 def setLanguage(lang):
     if pConfig.language!=0:
-        pConfig.language = lang;
+        pConfig.language = lang
         return 1
     else:
         return 0
