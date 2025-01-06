@@ -65,6 +65,7 @@ def lockCheck():
 def cleanTempFolder():
     os.chdir(f'{cache_dir}/temp')
     filelist = os.listdir()
+    count = 0
     for i in filelist:
         try:
             os.remove(i)
