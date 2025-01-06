@@ -12,7 +12,7 @@ import ppmcore
 """ Personalize Config """
 # Language:
 language = 'en_US'
-# Avaliable languages: en_US, zh_CN.
+# Available languages: en_US, zh_CN.
 # Please contribute to the localization if you can!
 
 # print version:
