@@ -75,7 +75,6 @@ def main():
             ppmcore.dpkg_loadPackages(repo) # precaching
             for package_name in args:
                 packageList = ppmcore.dpkg_getDependencies(package_name)
-                packageList = list(packageList)
                 packageList.append(package_name)
                 max_package_width = 15
                 print(f"{info} {localization['will_install']}")
