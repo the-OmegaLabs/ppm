@@ -190,13 +190,13 @@ def dpkg_downloadPackage(packname: str, path: str, repo: dict):
 
 
 def dpkg_installPackage(packname: str):
-    os.system(f"dpkg -i {packname}")
+    subprocess.run(['sudo', 'dpkg', '-i', packname], check=True)
 
 
 def dpkg_installPackagesfromDir(path):
     oldPath = os.getcwd()
     os.chdir(path)
-    os.system(f"dpkg -i *.deb")
+    subprocess.run(['sudo', 'dpkg', '-i', '*.deb'], check=True)
     os.chdir(oldPath)
 
 
