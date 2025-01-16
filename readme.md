@@ -6,9 +6,6 @@
 
 Plusto Package Manager is a *lightweight, extensible, easy-to-use, and mixable* package manager written in Python. It is user-friendly, highly customizable, and designed with easlier extensibility in mind. Currently, it supports both the `dpkg` and `winget` formats.
 
-### ⚠️ Attention for Windows Users
-If you are a Windows user, please use the winget version of Plusto Package Manager (**they are concept too**) (located in the `/windows` directory).
-
 ## Overview
 
 Plusto Package Manager is a hybrid package manager for Linux, currently supporting the `dpkg` format. We are conducting tests, and future versions are planned to merge various Linux package formats, such as Debian's `.deb`, Fedora's `.rpm`, and others, so that Plusto Package Manager will support a broader range of formats, offering better compatibility and flexibility for different Linux users.
