@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from setuptools.package_index import local_open
 
 version = '0.4'
 
@@ -86,7 +87,7 @@ def main():
                         if not packInfo.get('Suggests', None) is None:
                             suggests = packInfo['Suggests'].split(',')
                             suggestsPackages = [pkg.split()[0] for pkg in suggests]
-                            print(f'  Package {i} suggests optional dependencies:')
+                            print(f'  {localization["package"]} {i} {localization["suggest_optional"]}')
                             for j in suggestsPackages:
                                 suggestsPackageInfo = ppmcore.dpkg_searchPackage(j)
                                 print(f'      {j}')
@@ -97,23 +98,23 @@ def main():
                         installedSizeCount += int(packInfo['Installed-Size'])
                         print(f"{packageName.ljust(max_package_width)} {packInfo['Description']}")
                     except Exception as e:
-                        print(f"{error} Can't find package {i}: {e}")
-                print(f"{info} Will download {len(packageList)} packages, using {round(downloadSizeCount / 1024 / 1024, 1)} MB data.")
-                print(f"{info} After this operation, {round(installedSizeCount / 1024, 1)} MB of additional disk space will be used.")
+                        print(f"{error} {localization['cannotfind']} {i}: {e}")
+                print(f"{info} {len(packageList)} {localization['pkg_will_be_installed']}, {localization['using']} {round(downloadSizeCount / 1024 / 1024, 1)} MB {localization['data']}.")
+                print(f"{info} {localization['after_this_operation']}, {round(installedSizeCount / 1024, 1)} MB {localization['diskspacewillbeused']}.")
                 choice = input(f"{info} {localization['proceed']}? (Y/n) ")
                 if choice == 'y' or not choice:
                     for i in range(len(packageList)):
                         print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...', end='')
                         filename = ppmcore.dpkg_downloadPackage({packageList[i]}, f'{config.cache_dir}/temp', repo)
                         willInstall.append(filename)
-                        print(f'\r{success} Downloaded package {packageList[i]}.           ')
+                        print(f'\r{success} {localization["downloadlingpkg"]} {packageList[i]}.           ')
                 else:
                     return 1
         ppmcore.lockEnable()
         print(f"{info} {localization['select']} {len(packageList)} dpkg {localization['packages']}, {localization['call_dpkg']}")
         ppmcore.dpkg_installPackagesfromDir(f'{config.cache_dir}/temp')
-        print(f"{success} Installed {len(packageList)} packages.")
-        print(f"{info} Cleaning up temporary files...")
+        print(f"{success} {localization['installed']} {len(packageList)} {localization['packages']}.")
+        print(f"{info} {localization['cleantemp']}")
         oldPath = os.getcwd()
         ppmcore.cleanTempFolder()
         os.chdir(oldPath)
@@ -138,19 +139,19 @@ def main():
                 for package_name in args:
                     packageList = ppmcore.dpkg_getDependencies(package_name)
                     packageList.append(package_name)
-                    print(f"{info} Will download these package: ", end='')
+                    print(f"{info} {localization['will_install']} ", end='')
                     for i in packageList:
                         print(i, end=' ')
-                    print(f"\n{info} {len(packageList)} packages will be download.")
+                    print(f"\n{info} {len(packageList)} {localization['pkg_will_be_installed']}")
                     for i in range(len(packageList)):
-                        print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...', end='')
+                        print(f'\r{info} [{i + 1}/{len(packageList)}] {localization["downloadingpkg2"]} {packageList[i]}...', end='')
                         packinfo = ppmcore.dpkg_downloadPackage({packageList[i]}, '.', repo)
-                        print(f'\r{success} Downloaded package {packageList[i]}.           ')
+                        print(f'\r{success} {localization["downloadingpkg"]} {packageList[i]}.           ')
             else:
                 for package_name in args:
-                    print(f'\r{info} Downloading package {package_name}...', end='')
+                    print(f'\r{info} {localization["downloadingpkg2"]} {package_name}...', end='')
                     packinfo = ppmcore.dpkg_downloadPackage(package_name, '.', repo)
-                    print(f'\r{success} Downloaded package {package_name}.      ')
+                    print(f'\r{success} {localization["downloadingpkg"]} {package_name}.      ')
 
     elif command == 'search':
         repolist = ppmcore.getRepofromCache() 

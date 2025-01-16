@@ -29,5 +29,15 @@
     "call_dpkg": "calling dpkg...",
     "proceed": "Proceed",
     "will_install": "Will install these packages: ",
-    "pkg_will_be_installed": "packages will be installed"
+    "pkg_will_be_installed": "packages will be installed",
+    "suggest_optional": "suggests optional dependencies:",
+    "cannottfind": "Can't find package",
+    "using": "using",
+    "data": "data",
+    "after_this_operation": "After this operation",
+    "diskspacewillbeused": "of additional disk space will be used",
+    "downloadingpkg": "Downloaded package",
+    "downloadingpkg2": "Downloading package",
+    "installed": "Installed",
+    "cleantemp": "Cleaning up temporary files..."
 }
