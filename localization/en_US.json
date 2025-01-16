@@ -3,7 +3,7 @@
     "no_enough_arguments": "Not enough arguments provided.",
     "configuration_initialized": "The configuration file has been initialized.",
     "running_as_normal_user": "Running ppm as normal user.",
-    "see_website": "See more infomation at",
+    "see_website": "See more information at",
     "importing_launcher": "Directly importing ppm launcher is not recommend for managing system packages, you should be importing the modules of ppm, not the launcher.",
     "package": "Package",
     "packages": "Packages",
