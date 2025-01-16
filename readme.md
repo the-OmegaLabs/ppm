@@ -1,5 +1,5 @@
 <img align="left" width="150" height="150" align="left" style="float: left; margin: 0 10px 0 0;" src="https://ppm.stevesuk.eu.org/icon.png"> <h1>Plusto Package Manager</h1>
-<img align="left" src="https://img.shields.io/badge/Made%20with-Python-red?style=for-the-badge&logo=python&logoColor=white"><img src="https://img.shields.io/badge/Required-Linux-purple?style=for-the-badge&logo=linux&logoColor=white"> *Simple, efficient, and compatible with multiple Linux package formats for software management.*
+<img align="left" src="https://img.shields.io/badge/Made%20with-Python-magenta?style=for-the-badge&logo=python&logoColor=magenta"><img src="https://img.shields.io/badge/Required-Linux-purple?style=for-the-badge&logo=linux&logoColor=purple"> *Simple, efficient, and compatible with multiple Linux package formats for software management.*
 
 ![Alt](https://repobeats.axiom.co/api/embed/28cf570b81bed278b472ceb028fbc9ffbb84715f.svg "Repobeats analytics image")
 
