@@ -12,7 +12,7 @@ Formats support work:
 @: Working on
 Debian Linux (Like):
   - apt       : √
-  - dpkg      : × (wrapper in current version)
+  - dpkg      : √ (wrapper in current version)
 Red Hat Enterprise Linux (Like):
   - dnf / yum : @
   - rpm       : ×
