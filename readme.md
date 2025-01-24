@@ -5,13 +5,16 @@
 
 Plusto Package Manager is a *lightweight, easy-to-use, and mixable* package manager written in Python. It is user-friendly, highly customizable, and designed with easlier extensibility in mind. 
 
-Format supports:
+Formats support work:
 ```
+√: Supported
+×: Unsupported
+@: Working on
 Debian Linux (Like):
   - apt       : √
   - dpkg      : × (wrapper in current version)
 Red Hat Enterprise Linux (Like):
-  - dnf / yum : ×
+  - dnf / yum : @
   - rpm       : ×
 Arch Linux (like):
   - pacman    : ×
