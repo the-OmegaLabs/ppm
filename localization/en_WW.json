@@ -39,5 +39,6 @@
   "downloadingpkg": "Downloaded package",
   "downloadingpkg2": "Downloading package",
   "installed": "Installed",
-  "cleantemp": "Cleaning up temporary files..."
+  "cleantemp": "Cleaning up temporary files...",
+  "can_not_install": "Can't install package, possibly because of download error, please try again"
 }

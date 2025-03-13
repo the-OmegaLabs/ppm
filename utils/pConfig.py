@@ -1,5 +1,6 @@
 from utils.pColor import pColor
 import ppmcore
+import locale
 
 """
     ppm personalized configuration file
@@ -11,8 +12,11 @@ import ppmcore
 
 """ Personalize Config """
 # Language:
-language = 'en_US'
-# Available languages: en_US, zh_CN.
+# Auto Detect default locale
+language = locale.getdefaultlocale()[0]
+# language = "en_US"
+# ↑ you can do that either
+# Available languages: en_US, zh_CN, ru_RU, en_WW
 # Please contribute to the localization if you can!
 
 # print version:

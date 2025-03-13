@@ -111,7 +111,11 @@ def main():
                     return 1
         ppmcore.lockEnable()
         print(f"{info} {localization['select']} {len(packageList)} dpkg {localization['packages']}, {localization['call_dpkg']}")
-        ppmcore.dpkg_installPackagesfromDir(f'{config.cache_dir}/temp')
+        try:
+            ppmcore.dpkg_installPackagesfromDir(f'{config.cache_dir}/temp')
+        except Exception as e:
+            print(f"{error} {localization['can_not_install']} {e}")
+            return 1
         print(f"{success} {localization['installed']} {len(packageList)} {localization['packages']}.")
         print(f"{info} {localization['cleantemp']}")
         oldPath = os.getcwd()

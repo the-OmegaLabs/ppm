@@ -39,5 +39,6 @@
     "downloadingpkg": "已下载软件包",
     "downloadingpkg2": "正在下载软件包",
     "installed": "已安装",
-    "cleantemp": "正在清理临时文件..."
+    "cleantemp": "正在清理临时文件...",
+    "can_not_install": "无法安装软件包，可能是因为下载出现错误，请重试"
 }
