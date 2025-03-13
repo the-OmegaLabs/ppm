@@ -34,7 +34,7 @@ def isColorSupported():
     return False
 
 def runAsRoot(args):
-    subprocess.run(['sudo', 'sh', '-c', f"cd {os.getcwd()}; /bin/python3 launcher.py {args}"], check=True)
+    subprocess.run(['sudo', 'sh', '-c', f"cd /opt/ppm; /bin/python3 launcher.py {args}"], check=True)
 
 def checkIsRoot():  # return true when user is root
     return os.getuid() == 0
