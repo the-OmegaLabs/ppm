@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from setuptools.package_index import local_open
 
 version = '0.4'
 
@@ -107,7 +106,7 @@ def main():
                         print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...', end='')
                         filename = ppmcore.dpkg_downloadPackage({packageList[i]}, f'{config.cache_dir}/temp', repo)
                         willInstall.append(filename)
-                        print(f'\r{success} {localization["downloadlingpkg"]} {packageList[i]}.           ')
+                        print(f'\r{success} {localization["downloadingpkg"]} {packageList[i]}.           ')
                 else:
                     return 1
         ppmcore.lockEnable()
