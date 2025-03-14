@@ -56,6 +56,7 @@ clean        Clean ppm cache files
 download     Download package by keyword (beta)"""
 
 def main():
+    global packageList
     if len(sys.argv) < 2:
         print(f"{error} {localization['no_enough_arguments']}")
         print(localization['help_text'])
@@ -104,7 +105,7 @@ def main():
                 if choice == 'y' or not choice:
                     for i in range(len(packageList)):
                         print(f'\r{info} [{i + 1}/{len(packageList)}] Downloading package {packageList[i]}...', end='')
-                        filename = ppmcore.dpkg_downloadPackage({packageList[i]}, f'{config.cache_dir}/temp', repo)
+                        filename = ppmcore.dpkg_downloadPackage(packageList[i], f'{config.cache_dir}/temp', repo)
                         willInstall.append(filename)
                         print(f'\r{success} {localization["downloadingpkg"]} {packageList[i]}.           ')
                 else:
@@ -148,7 +149,7 @@ def main():
                     print(f"\n{info} {len(packageList)} {localization['pkg_will_be_installed']}")
                     for i in range(len(packageList)):
                         print(f'\r{info} [{i + 1}/{len(packageList)}] {localization["downloadingpkg2"]} {packageList[i]}...', end='')
-                        packinfo = ppmcore.dpkg_downloadPackage({packageList[i]}, '.', repo)
+                        packinfo = ppmcore.dpkg_downloadPackage(packageList[i], '.', repo)
                         print(f'\r{success} {localization["downloadingpkg"]} {packageList[i]}.           ')
             else:
                 for package_name in args:
