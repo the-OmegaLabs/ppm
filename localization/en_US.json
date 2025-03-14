@@ -31,7 +31,7 @@
     "will_install": "Will install these packages: ",
     "pkg_will_be_installed": "packages will be installed",
     "suggest_optional": "suggests optional dependencies:",
-    "cannottfind": "Can't find package",
+    "cannotfind": "Can't find package",
     "using": "using",
     "data": "data",
     "after_this_operation": "After this operation",

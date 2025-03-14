@@ -31,7 +31,7 @@
     "will_install": "将安装以下软件包：",
     "pkg_will_be_installed": "软件包将被安装",
     "suggest_optional": "建议的可选依赖：",
-    "cannottfind": "无法找到软件包",
+    "cannotfind": "无法找到软件包",
     "using": "使用",
     "data": "数据",
     "after_this_operation": "此操作后",
