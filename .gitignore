@@ -1,8 +1,0 @@
-__pycache__
-test.py
-./rootfs
-.idea
-
-# for .idea/.gitignore
-/shelf/
-/workspace.xml
