@@ -20,16 +20,19 @@ import (
 	"fmt"
 	"os"
 	"os/user"
+
 	"ppm/ppmcore"
 
 	"github.com/fatih/color"
 )
 
 const Version string = "0.1"
+const Cache_dir string = "/var/ppm"
+const Config_dir string = "/etc/ppm"
 
 var helpText = `Usage: ppm [options] <command>
 
-ppm is a command-line package manager currently under testing.
+ppm-cli is a command-line package manager currently under testing.
 If you encounter any issues while using ppm, please report them at: https://github.com/the-OmegaLabs/ppm/issues
 
 This software is licensed under the Apache License v2.0.
@@ -80,12 +83,12 @@ func checkEnv() bool {
 		failed = true
 	}
 
-	if err := os.MkdirAll("/var/ppm/", 0755); err != nil {
+	if err := os.MkdirAll(Cache_dir, 0755); err != nil {
 		colorLn(failColor, fmt.Sprintf("Failed to create /var/ppm/: %v", err))
 		failed = true
 	}
 
-	if err := os.MkdirAll("/etc/ppm/", 0755); err != nil {
+	if err := os.MkdirAll(Config_dir, 0755); err != nil {
 		colorLn(failColor, fmt.Sprintf("Failed to create /var/ppm/: %v", err))
 		failed = true
 	}
@@ -121,6 +124,13 @@ func main() {
 
 	case "hello":
 		fmt.Println(ppmcore.Hello())
-	}
+	case "init":
+		err := ppmcore.InitConfig(Config_dir)
 
+		if err != nil {
+			colorLn(failColor, "Error when initializing configuration file.")
+			return
+		}
+		colorLn(doneColor, "The configuration file has been initialized.")
+	}
 }
