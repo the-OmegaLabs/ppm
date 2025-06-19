@@ -1,5 +1,5 @@
 <img align="left" width="150" height="150" align="left" style="float: left; margin: 0 10px 0 0;" src="https://ppm.stevesuk.eu.org/icon.png"> <h1>Plusto Package Manager</h1>
-<img align="left" src="https://img.shields.io/badge/Made%20with-Python-magenta?style=for-the-badge&logo=python&logoColor=magenta"><img src="https://img.shields.io/badge/Required-Linux-purple?style=for-the-badge&logo=linux&logoColor=purple"> *Simple, efficient, and compatibility for software management.*
+<img align="left" src="https://img.shields.io/badge/Made%20with-Golang-magenta?style=for-the-badge&logo=go&logoColor=magenta"><img src="https://img.shields.io/badge/Required-Linux-purple?style=for-the-badge&logo=linux&logoColor=purple"> *Simple, efficient, and compatibility for software management.*
 
 Plusto Package Manager is a *lightweight, easy-to-use, and mixable* package manager written in Python and Golang. It is user-friendly, highly customizable, and designed with easlier extensibility in mind. 
 
