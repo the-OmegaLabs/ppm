@@ -89,6 +89,10 @@ func main() {
 		return
 	}
 
+	if ppmcore.CheckLock(Cache_dir) {
+		colorLn(warnColor, "ppm lock is active. Please check if another ppm process is running?")
+	}
+
 	if len(os.Args) < 2 {
 		fmt.Println(helpText)
 		return
