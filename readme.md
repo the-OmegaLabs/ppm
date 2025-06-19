@@ -9,7 +9,7 @@ Formats support work:
 ×: Unsupported
 @: Working on
 Debian Linux (Like):
-  - apt       : x
+  - apt       : @
   - dpkg      : x 
 Plusto User Repo :
   - pur       : x
