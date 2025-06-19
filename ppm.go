@@ -19,7 +19,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/user"
 
 	"ppm/ppmcore"
 
@@ -60,19 +59,6 @@ func isPipe() bool {
 func colorLn(c *color.Color, text string) {
 	c.Print("<>")
 	fmt.Println(" " + text)
-}
-
-func checkRoot() bool {
-	var err bool = false
-
-	usr, _ := user.Current()
-
-	if usr.Uid != "0" { // check root
-		colorLn(failColor, "This operation requires administrative privileges.")
-		err = true
-	}
-
-	return err
 }
 
 func checkEnv() bool {
@@ -125,12 +111,18 @@ func main() {
 	case "hello":
 		fmt.Println(ppmcore.Hello())
 	case "init":
-		err := ppmcore.InitConfig(Config_dir)
+		err := ppmcore.InitConfig(Cache_dir)
 
 		if err != nil {
 			colorLn(failColor, "Error when initializing configuration file.")
 			return
 		}
 		colorLn(doneColor, "The configuration file has been initialized.")
+	case "reset":
+		if ppmcore.DisableLock(Cache_dir) {
+			colorLn(doneColor, "Successfully removed the lock file")
+		} else {
+			colorLn(failColor, "Failed to remove the lock file")
+		}
 	}
 }

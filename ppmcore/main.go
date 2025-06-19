@@ -2,8 +2,8 @@ package ppmcore
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
+	"os/user"
 )
 
 type Repo struct {
@@ -15,6 +15,40 @@ type Repo struct {
 }
 
 const Version string = "0.1"
+
+func checkRoot() bool {
+	usr, _ := user.Current()
+	return usr.Uid == "0"
+}
+
+func EnableLock(lockPath string) bool {
+	if !checkRoot() {
+		return false
+	}
+
+	file, err := os.Create(lockPath + "/ppm.lock")
+	if err != nil {
+		return false
+	}
+	defer file.Close()
+	return true
+}
+
+func DisableLock(lockPath string) bool {
+	if !checkRoot() {
+		return false
+	}
+	err := os.Remove(lockPath + "/ppm.lock")
+	return err == nil
+}
+
+func CheckLock(lockPath string) bool {
+	if !checkRoot() {
+		return false
+	}
+	_, err := os.Stat(lockPath + "/ppm.lock")
+	return err == nil
+}
 
 func Hello() string {
 	return "Hello, World!"
@@ -41,7 +75,7 @@ func InitConfig(configDir string) error {
 	encoder := json.NewEncoder(f)
 	encoder.SetIndent("", "    ")
 	if err := encoder.Encode(exampleRepo); err != nil {
-		return fmt.Errorf("failed to write json: %w", err)
+		return err
 	}
 
 	return nil
