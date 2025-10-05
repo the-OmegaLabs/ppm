@@ -11,7 +11,7 @@ Formats support work:
 ×: Unsupported
 @: Working on
 Debian Linux (Like):
-  - apt       : x
+  - apt       : @
   - dpkg      : x 
 Plusto User Repo :
   - pur       : x
@@ -20,7 +20,7 @@ Windows Package Manager:
 ```
 ## Overview
 
-Plusto Package Manager is a hybrid package manager for OmegaOS Linux, currently supporting the `dpkg` format. 
+Plusto Package Manager is a hybrid software package manager for OmegaOS Linux, currently supporting the `dpkg` format. 
 
 ## Installing
 
