@@ -3,7 +3,7 @@
 
 ![Alt](https://repobeats.axiom.co/api/embed/28cf570b81bed278b472ceb028fbc9ffbb84715f.svg "Repobeats analytics image")
 
-Plusto Package Manager is a *lightweight, easy-to-use, and mixable* package manager written in Python and Golang. It is user-friendly, highly customizable, and designed with easlier extensibility in mind. 
+Plusto Package Manager is a *lightweight, easy-to-use, and mixable* package manager written in Python. It is user-friendly, highly customizable, and designed with easlier extensibility in mind. 
 
 Formats support work:
 ```
