@@ -2,6 +2,7 @@
 
 import sys
 import os
+import time
 import colorama
 
 ###########################################
@@ -25,8 +26,21 @@ error = style.error
 manager = core.Manager()
 manager.root_path = './data'
 
+lock = manager.hold_lock()
+
+if not lock:
+    print(f'{warning} Cannot acquire lock. Another instance may still be running.')
+
+while not lock:
+    if manager.hold_lock(): break
+    
+    print(f'{infomation} Waiting for another instance to finish...')
+    
+    time.sleep(1)
+
 if not manager.init():
     print(f'{error} Error when initializing ppm.')
+    sys.exit()
 
 if len(sys.argv) < 2:  # Direct execution
     print(f'{error} Please provide complete arguments.')
@@ -45,3 +59,6 @@ if len(sys.argv) < 2:  # Direct execution
     print()
     print('This program is currently in early Alpha. If you encounter any issues or bugs,')
     print('please report them at [https://github.com/the-OmegaLabs/ppm/issues].')
+
+else:
+    manager.execute(sys.argv[1], sys.argv[1:])
